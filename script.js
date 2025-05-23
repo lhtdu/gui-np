@@ -26,6 +26,7 @@ const notificationText = document.getElementById('notificationText');
 const requirePassword = document.getElementById('requirePassword');
 const returnToEditBtn = document.getElementById('returnToEditBtn');
 const sharedTitle = document.querySelector('.shared-title');
+const tabsContainer = document.querySelector('.tabs');
 
 // Letter elements
 const letterEditor = document.getElementById('letterEditor');
@@ -72,6 +73,32 @@ function checkSharedMode() {
     if (shareParam) {
         isOwnerMode = false;
         
+        // Hide ALL owner elements
+        document.querySelectorAll('.owner-only').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Hide tabs completely
+        if (tabsContainer) {
+            tabsContainer.style.display = 'none';
+        }
+        
+        // Only show letter tab content
+        tabContents.forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('letter').style.display = 'block';
+        
+        // Show shared-only elements
+        document.querySelectorAll('.shared-only').forEach(el => {
+            el.style.display = 'block';
+        });
+        
+        // Show shared title
+        if (sharedTitle) {
+            sharedTitle.style.display = 'block';
+        }
+        
         // If shared view requires password
         if (urlParams.get('protected') === '1') {
             // Still show password screen
@@ -82,26 +109,12 @@ function checkSharedMode() {
             initializeSharedView();
         }
         
-        // Hide owner-only elements
-        document.querySelectorAll('.owner-only').forEach(el => {
-            el.style.display = 'none';
-        });
-        
-        // Show shared-only elements
-        document.querySelectorAll('.shared-only').forEach(el => {
-            el.style.display = 'block';
-        });
-        
-        // Show shared title
-        sharedTitle.style.display = 'block';
-        
-        // Set the first tab as active
-        document.getElementById('letter').classList.add('active');
-        
         // Return button functionality
-        returnToEditBtn.addEventListener('click', () => {
-            window.location.href = window.location.pathname;
-        });
+        if (returnToEditBtn) {
+            returnToEditBtn.addEventListener('click', () => {
+                window.location.href = window.location.pathname;
+            });
+        }
     }
 }
 
@@ -112,7 +125,7 @@ function initializeSharedView() {
     // Start heart animation
     startHeartsAnimation();
     
-    // Play background music
+    // Play background music at lower volume
     bgMusic.volume = 0.2;
     bgMusic.play();
 }
