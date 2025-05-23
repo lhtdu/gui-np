@@ -1955,3 +1955,299 @@ input:checked + .toggle-slider:before {
     border-color: var(--primary-light);
     background-color: #fff;
 }
+/* Thêm vào cuối file styles.css */
+
+/* Mobile optimizations - Fixed */
+@media (max-width: 768px) {
+    body, html {
+        overflow-x: hidden;
+    }
+    
+    .main-container {
+        width: 95%;
+        padding: 20px 15px;
+        margin-bottom: 50px;
+    }
+    
+    header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .love-days-container {
+        width: 90%;
+    }
+    
+    .love-days {
+        width: 100%;
+        padding: 15px 20px;
+    }
+    
+    .love-days-counter {
+        font-size: 2rem;
+    }
+    
+    .love-days-label {
+        font-size: 1rem;
+    }
+    
+    .tabs {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        white-space: nowrap;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-btn {
+        flex-shrink: 0;
+        padding: 10px 15px;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .letter {
+        padding: 20px 15px;
+        min-height: auto;
+        font-size: 0.95rem;
+    }
+    
+    .edit-letter-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .letter-edit-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .letter-edit-buttons button {
+        width: 100%;
+    }
+    
+    .edit-letter {
+        min-height: 250px;
+    }
+    
+    .text-controls {
+        flex-direction: column;
+        padding: 12px;
+    }
+    
+    .control-group {
+        width: 100%;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .effect-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .share-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .qr-code-container {
+        margin-bottom: 30px;
+    }
+    
+    .share-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .timeline {
+        padding-left: 10px;
+    }
+    
+    .timeline::after {
+        left: 31px;
+    }
+    
+    .timeline-item {
+        width: 100%;
+        padding-left: 60px;
+        padding-right: 10px;
+    }
+    
+    .timeline-item:nth-child(even) {
+        left: 0;
+    }
+    
+    .timeline-item::after {
+        left: 18px;
+    }
+    
+    .timeline-item:nth-child(odd)::after {
+        right: auto;
+        left: 18px;
+    }
+    
+    .timeline-content {
+        border-radius: 20px !important;
+    }
+    
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .gallery-item {
+        height: 180px;
+    }
+    
+    .music-control {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .music-control i {
+        font-size: 20px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .modal-form {
+        padding: 0;
+    }
+    
+    .return-to-edit {
+        margin-top: 20px;
+    }
+    
+    .return-to-edit button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Specific fixes for very small screens */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    .main-container {
+        padding: 15px 10px;
+    }
+    
+    .letter {
+        padding: 15px 12px;
+    }
+    
+    .password-container {
+        padding: 25px 15px;
+    }
+    
+    .password-container h2 {
+        font-size: 2.2rem;
+    }
+    
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .tab-btn i {
+        margin-right: 4px;
+    }
+    
+    .notification {
+        max-width: 90%;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Shared view specific styles */
+.shared-only {
+    display: none;
+}
+
+.shared-view .letter-container {
+    padding: 10px 0;
+}
+
+.shared-title {
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+.shared-title h3 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    font-family: 'Dancing Script', cursive;
+    margin: 0;
+}
+
+.return-to-edit {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.return-to-edit button {
+    background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Comfortaa', sans-serif;
+    box-shadow: 0 8px 20px rgba(255, 110, 149, 0.3);
+    display: inline-flex;
+    align-items: center;
+}
+
+.return-to-edit button i {
+    margin-right: 8px;
+}
+
+/* Fix floating section title */
+.section-title {
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Fix love days on mobile */
+.love-days::before, 
+.love-days::after {
+    display: none;
+}
+
+/* Better visible days count */
+#daysCount {
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+
+/* Fixed hearts animation container */
+.hearts-container {
+    z-index: 0;
+}
