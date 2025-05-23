@@ -1,5 +1,7 @@
 // Default password (You can change this)
-let password = "iloveyou";
+let password = "ngocphuong";
+let isOwnerMode = true;
+let requirePasswordForShared = false;
 
 // Elements
 const loadingScreen = document.getElementById('loadingScreen');
@@ -21,6 +23,9 @@ const savePassword = document.getElementById('savePassword');
 const newPassword = document.getElementById('newPassword');
 const notification = document.getElementById('notification');
 const notificationText = document.getElementById('notificationText');
+const requirePassword = document.getElementById('requirePassword');
+const returnToEditBtn = document.getElementById('returnToEditBtn');
+const sharedTitle = document.querySelector('.shared-title');
 
 // Letter elements
 const letterEditor = document.getElementById('letterEditor');
@@ -59,9 +64,65 @@ const qrCode = document.getElementById('qrCode');
 const shareLink = document.getElementById('shareLink');
 const copyLinkBtn = document.getElementById('copyLinkBtn');
 
+// Check if we're in shared view mode
+function checkSharedMode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareParam = urlParams.get('share');
+    
+    if (shareParam) {
+        isOwnerMode = false;
+        
+        // If shared view requires password
+        if (urlParams.get('protected') === '1') {
+            // Still show password screen
+            passwordScreen.style.display = 'flex';
+        } else {
+            // Skip password for unprotected shares
+            passwordScreen.style.display = 'none';
+            initializeSharedView();
+        }
+        
+        // Hide owner-only elements
+        document.querySelectorAll('.owner-only').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Show shared-only elements
+        document.querySelectorAll('.shared-only').forEach(el => {
+            el.style.display = 'block';
+        });
+        
+        // Show shared title
+        sharedTitle.style.display = 'block';
+        
+        // Set the first tab as active
+        document.getElementById('letter').classList.add('active');
+        
+        // Return button functionality
+        returnToEditBtn.addEventListener('click', () => {
+            window.location.href = window.location.pathname;
+        });
+    }
+}
+
+// Initialize shared view
+function initializeSharedView() {
+    mainContent.style.display = 'block';
+    
+    // Start heart animation
+    startHeartsAnimation();
+    
+    // Play background music
+    bgMusic.volume = 0.2;
+    bgMusic.play();
+}
+
 // Simulating loading time
 setTimeout(() => {
     loadingScreen.style.display = 'none';
+    
+    // Check if we're in shared mode
+    checkSharedMode();
 }, 2000);
 
 // Generate unique share link
@@ -73,12 +134,13 @@ function generateShareLink() {
     }
     
     const baseUrl = window.location.origin + window.location.pathname;
-    return `${baseUrl}?share=${result}`;
+    const protectedParam = requirePasswordForShared ? '&protected=1' : '';
+    return `${baseUrl}?share=${result}${protectedParam}`;
 }
 
 // Generate QR code
 function generateQRCode(url) {
-    if (window.QRCode) {
+    if (window.QRCode && qrCode) {
         qrCode.innerHTML = '';
         new QRCode(qrCode, {
             text: url,
@@ -91,39 +153,58 @@ function generateQRCode(url) {
     }
 }
 
+// Update share link when checkbox changes
+if (requirePassword) {
+    requirePassword.addEventListener('change', () => {
+        requirePasswordForShared = requirePassword.checked;
+        const newShareLink = generateShareLink();
+        shareLink.value = newShareLink;
+        generateQRCode(newShareLink);
+    });
+}
+
 // Set share link
-const uniqueShareLink = generateShareLink();
-shareLink.value = uniqueShareLink;
-generateQRCode(uniqueShareLink);
+if (shareLink) {
+    const uniqueShareLink = generateShareLink();
+    shareLink.value = uniqueShareLink;
+    generateQRCode(uniqueShareLink);
+}
 
 // Copy share link
-copyLinkBtn.addEventListener('click', () => {
-    shareLink.select();
-    document.execCommand('copy');
-    showNotification('Đường dẫn đã được sao chép!', 'success');
-});
+if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', () => {
+        shareLink.select();
+        document.execCommand('copy');
+        showNotification('Đường dẫn đã được sao chép!', 'success');
+    });
+}
 
 // Check password
 submitPassword.addEventListener('click', () => {
     if (passwordInput.value === password) {
         passwordScreen.style.display = 'none';
-        mainContent.style.display = 'block';
         
-        // Play background music
-        bgMusic.volume = 0.3;
-        bgMusic.play();
-        
-        // Start animations if enabled
-        if (toggleHearts.checked) {
-            startHeartsAnimation();
-        }
-        
-        if (toggleSnow.checked) {
-            startSnowAnimation();
-        }
-        
-        if (toggleFireworks.checked) {
-            startFireworksAnimation();
+        if (isOwnerMode) {
+            mainContent.style.display = 'block';
+            
+            // Play background music
+            bgMusic.volume = 0.3;
+            bgMusic.play();
+            
+            // Start animations if enabled
+            if (toggleHearts.checked) {
+                startHeartsAnimation();
+            }
+            
+            if (toggleSnow.checked) {
+                startSnowAnimation();
+            }
+            
+            if (toggleFireworks.checked) {
+                startFireworksAnimation();
+            }
+        } else {
+            initializeSharedView();
         }
     } else {
         passwordInput.classList.add('shake');
@@ -143,16 +224,18 @@ passwordInput.addEventListener('keyup', (e) => {
 
 // Music control
 let isMusicPlaying = false;
-musicControl.addEventListener('click', () => {
-    if (isMusicPlaying) {
-        bgMusic.pause();
-        musicControl.innerHTML = '<i class="fas fa-music"></i>';
-    } else {
-        bgMusic.play();
-        musicControl.innerHTML = '<i class="fas fa-pause"></i>';
-    }
-    isMusicPlaying = !isMusicPlaying;
-});
+if (musicControl) {
+    musicControl.addEventListener('click', () => {
+        if (isMusicPlaying) {
+            bgMusic.pause();
+            musicControl.innerHTML = '<i class="fas fa-music"></i>';
+        } else {
+            bgMusic.play();
+            musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+        isMusicPlaying = !isMusicPlaying;
+    });
+}
 
 // Tab switching
 tabBtns.forEach(btn => {
@@ -168,30 +251,38 @@ tabBtns.forEach(btn => {
 });
 
 // Switch between view mode and edit mode for letter
-switchToEditMode.addEventListener('click', () => {
-    letterViewMode.style.display = 'none';
-    letterEditMode.style.display = 'block';
-});
+if (switchToEditMode) {
+    switchToEditMode.addEventListener('click', () => {
+        letterViewMode.style.display = 'none';
+        letterEditMode.style.display = 'block';
+    });
+}
 
-cancelEdit.addEventListener('click', () => {
-    letterViewMode.style.display = 'block';
-    letterEditMode.style.display = 'none';
-});
+if (cancelEdit) {
+    cancelEdit.addEventListener('click', () => {
+        letterViewMode.style.display = 'block';
+        letterEditMode.style.display = 'none';
+    });
+}
 
 // Letter formatting
 let currentFont = 'font-quicksand';
 let currentColor = '#ff6e95';
 let currentEffects = [];
 
-fontSelector.addEventListener('change', () => {
-    currentFont = fontSelector.value;
-    updateLetterPreview();
-});
+if (fontSelector) {
+    fontSelector.addEventListener('change', () => {
+        currentFont = fontSelector.value;
+        updateLetterPreview();
+    });
+}
 
-colorPicker.addEventListener('input', () => {
-    currentColor = colorPicker.value;
-    updateLetterPreview();
-});
+if (colorPicker) {
+    colorPicker.addEventListener('input', () => {
+        currentColor = colorPicker.value;
+        updateLetterPreview();
+    });
+}
 
 effectBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -211,50 +302,56 @@ effectBtns.forEach(btn => {
     });
 });
 
-letterEditor.addEventListener('input', updateLetterPreview);
+if (letterEditor) {
+    letterEditor.addEventListener('input', updateLetterPreview);
+}
 
 function updateLetterPreview() {
     // Apply text formatting
-    letterDisplay.className = 'letter ' + currentFont + ' ' + currentEffects.join(' ');
-    letterDisplay.style.color = currentColor;
-    letterDisplay.textContent = letterEditor.value;
+    if (letterDisplay) {
+        letterDisplay.className = 'letter ' + currentFont + ' ' + currentEffects.join(' ');
+        letterDisplay.style.color = currentColor;
+        letterDisplay.textContent = letterEditor ? letterEditor.value : '';
+    }
 }
 
-saveLetter.addEventListener('click', () => {
-    // Save letter to localStorage
-    const letterData = {
-        text: letterEditor.value,
-        font: currentFont,
-        color: currentColor,
-        effects: currentEffects
-    };
-    
-    localStorage.setItem('savedLetter', JSON.stringify(letterData));
-    showNotification('Tâm thư đã được lưu thành công!', 'success');
-    
-    // Switch back to view mode
-    letterViewMode.style.display = 'block';
-    letterEditMode.style.display = 'none';
-    
-    // Trigger fireworks
-    for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-            createFirework();
-        }, i * 300);
-    }
-});
+if (saveLetter) {
+    saveLetter.addEventListener('click', () => {
+        // Save letter to localStorage
+        const letterData = {
+            text: letterEditor.value,
+            font: currentFont,
+            color: currentColor,
+            effects: currentEffects
+        };
+        
+        localStorage.setItem('savedLetter', JSON.stringify(letterData));
+        showNotification('Tâm thư đã được lưu thành công!', 'success');
+        
+        // Switch back to view mode
+        letterViewMode.style.display = 'block';
+        letterEditMode.style.display = 'none';
+        
+        // Trigger fireworks
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                createFirework();
+            }, i * 300);
+        }
+    });
+}
 
 // Load saved letter if exists
 if (localStorage.getItem('savedLetter')) {
     const letterData = JSON.parse(localStorage.getItem('savedLetter'));
-    letterEditor.value = letterData.text;
+    if (letterEditor) letterEditor.value = letterData.text;
     currentFont = letterData.font;
     currentColor = letterData.color;
     currentEffects = letterData.effects;
     
     // Update UI to match saved data
-    fontSelector.value = currentFont;
-    colorPicker.value = currentColor;
+    if (fontSelector) fontSelector.value = currentFont;
+    if (colorPicker) colorPicker.value = currentColor;
     
     effectBtns.forEach(btn => {
         const effect = btn.dataset.effect;
@@ -432,30 +529,36 @@ function createExplosion(x, y, color) {
 }
 
 // Toggle animations
-toggleHearts.addEventListener('change', () => {
-    if (toggleHearts.checked) {
-        startHeartsAnimation();
-    } else {
-        heartsContainer.innerHTML = '';
-    }
-});
+if (toggleHearts) {
+    toggleHearts.addEventListener('change', () => {
+        if (toggleHearts.checked) {
+            startHeartsAnimation();
+        } else {
+            heartsContainer.innerHTML = '';
+        }
+    });
+}
 
-toggleSnow.addEventListener('change', () => {
-    if (toggleSnow.checked) {
-        startSnowAnimation();
-    } else {
-        snowContainer.style.display = 'none';
-        snowContainer.innerHTML = '';
-    }
-});
+if (toggleSnow) {
+    toggleSnow.addEventListener('change', () => {
+        if (toggleSnow.checked) {
+            startSnowAnimation();
+        } else {
+            snowContainer.style.display = 'none';
+            snowContainer.innerHTML = '';
+        }
+    });
+}
 
-toggleFireworks.addEventListener('change', () => {
-    if (toggleFireworks.checked) {
-        startFireworksAnimation();
-    } else {
-        fireworksContainer.innerHTML = '';
-    }
-});
+if (toggleFireworks) {
+    toggleFireworks.addEventListener('change', () => {
+        if (toggleFireworks.checked) {
+            startFireworksAnimation();
+        } else {
+            fireworksContainer.innerHTML = '';
+        }
+    });
+}
 
 // Calculate days together
 function calculateDays() {
@@ -464,8 +567,8 @@ function calculateDays() {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0];
         localStorage.setItem('anniversaryDate', formattedDate);
-        anniversaryDate.value = formattedDate;
-    } else {
+        if (anniversaryDate) anniversaryDate.value = formattedDate;
+    } else if (anniversaryDate) {
         anniversaryDate.value = localStorage.getItem('anniversaryDate');
     }
     
@@ -480,66 +583,78 @@ function updateDaysCount() {
     const timeDiff = today.getTime() - startDate.getTime();
     const dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
     
-    daysCount.textContent = dayDiff;
-    
-    // Make counter animation
-    daysCount.classList.add('highlight');
-    setTimeout(() => {
-        daysCount.classList.remove('highlight');
-    }, 1000);
+    if (daysCount) {
+        daysCount.textContent = dayDiff;
+        
+        // Make counter animation
+        daysCount.classList.add('highlight');
+        setTimeout(() => {
+            daysCount.classList.remove('highlight');
+        }, 1000);
+    }
 }
 
 calculateDays();
 
 // Save anniversary date
-anniversaryDate.addEventListener('change', () => {
-    localStorage.setItem('anniversaryDate', anniversaryDate.value);
-    updateDaysCount();
-    showNotification('Ngày kỷ niệm đã được cập nhật!', 'success');
-});
+if (anniversaryDate) {
+    anniversaryDate.addEventListener('change', () => {
+        localStorage.setItem('anniversaryDate', anniversaryDate.value);
+        updateDaysCount();
+        showNotification('Ngày kỷ niệm đã được cập nhật!', 'success');
+    });
+}
 
 // Save new password
-savePassword.addEventListener('click', () => {
-    if (newPassword.value.trim() !== '') {
-        password = newPassword.value;
-        localStorage.setItem('password', password);
-        showNotification('Mật khẩu đã được cập nhật!', 'success');
-        newPassword.value = '';
-    } else {
-        showNotification('Vui lòng nhập mật khẩu mới!', 'error');
-    }
-});
+if (savePassword) {
+    savePassword.addEventListener('click', () => {
+        if (newPassword.value.trim() !== '') {
+            password = newPassword.value;
+            localStorage.setItem('password', password);
+            showNotification('Mật khẩu đã được cập nhật!', 'success');
+            newPassword.value = '';
+        } else {
+            showNotification('Vui lòng nhập mật khẩu mới!', 'error');
+        }
+    });
+}
 
 // Memory modal
-addMemory.addEventListener('click', () => {
-    memoryModal.classList.add('show');
-});
+if (addMemory) {
+    addMemory.addEventListener('click', () => {
+        memoryModal.classList.add('show');
+    });
+}
 
-closeMemoryModal.addEventListener('click', () => {
-    memoryModal.classList.remove('show');
-});
-
-memoryForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const date = formatDate(memoryDate.value);
-    const text = memoryText.value;
-    
-    if (date && text) {
-        addMemoryToTimeline(date, text);
-        
-        // Save to localStorage
-        const memories = JSON.parse(localStorage.getItem('memories') || '[]');
-        memories.push({ date, text });
-        localStorage.setItem('memories', JSON.stringify(memories));
-        
-        // Close modal and reset form
+if (closeMemoryModal) {
+    closeMemoryModal.addEventListener('click', () => {
         memoryModal.classList.remove('show');
-        memoryForm.reset();
+    });
+}
+
+if (memoryForm) {
+    memoryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        showNotification('Kỷ niệm đã được thêm thành công!', 'success');
-    }
-});
+        const date = formatDate(memoryDate.value);
+        const text = memoryText.value;
+        
+        if (date && text) {
+            addMemoryToTimeline(date, text);
+            
+            // Save to localStorage
+            const memories = JSON.parse(localStorage.getItem('memories') || '[]');
+            memories.push({ date, text });
+            localStorage.setItem('memories', JSON.stringify(memories));
+            
+            // Close modal and reset form
+            memoryModal.classList.remove('show');
+            memoryForm.reset();
+            
+            showNotification('Kỷ niệm đã được thêm thành công!', 'success');
+        }
+    });
+}
 
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -552,6 +667,8 @@ function formatDate(dateString) {
 
 function addMemoryToTimeline(date, text) {
     const timeline = document.getElementById('timelineContainer');
+    if (!timeline) return;
+    
     const newMemory = document.createElement('div');
     newMemory.classList.add('timeline-item');
     newMemory.innerHTML = `
@@ -571,38 +688,46 @@ function addMemoryToTimeline(date, text) {
 }
 
 // Image modal
-addImage.addEventListener('click', () => {
-    imageModal.classList.add('show');
-});
+if (addImage) {
+    addImage.addEventListener('click', () => {
+        imageModal.classList.add('show');
+    });
+}
 
-closeImageModal.addEventListener('click', () => {
-    imageModal.classList.remove('show');
-});
-
-imageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const url = imageUrl.value;
-    const caption = imageCaption.value;
-    
-    if (url) {
-        addImageToGallery(url, caption);
-        
-        // Save to localStorage
-        const images = JSON.parse(localStorage.getItem('images') || '[]');
-        images.push({ url, caption });
-        localStorage.setItem('images', JSON.stringify(images));
-        
-        // Close modal and reset form
+if (closeImageModal) {
+    closeImageModal.addEventListener('click', () => {
         imageModal.classList.remove('show');
-        imageForm.reset();
+    });
+}
+
+if (imageForm) {
+    imageForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        showNotification('Ảnh đã được thêm thành công!', 'success');
-    }
-});
+        const url = imageUrl.value;
+        const caption = imageCaption.value;
+        
+        if (url) {
+            addImageToGallery(url, caption);
+            
+            // Save to localStorage
+            const images = JSON.parse(localStorage.getItem('images') || '[]');
+            images.push({ url, caption });
+            localStorage.setItem('images', JSON.stringify(images));
+            
+            // Close modal and reset form
+            imageModal.classList.remove('show');
+            imageForm.reset();
+            
+            showNotification('Ảnh đã được thêm thành công!', 'success');
+        }
+    });
+}
 
 function addImageToGallery(url, caption) {
     const gallery = document.querySelector('.gallery');
+    if (!gallery) return;
+    
     const addImageBtn = document.getElementById('addImage');
     
     const newImage = document.createElement('div');
@@ -612,8 +737,12 @@ function addImageToGallery(url, caption) {
         <div class="caption">${caption}</div>
     `;
     
-    // Insert before the "Add Image" button
-    gallery.insertBefore(newImage, addImageBtn.nextSibling);
+    // Insert before the "Add Image" button or at the beginning
+    if (addImageBtn) {
+        gallery.insertBefore(newImage, addImageBtn.nextSibling);
+    } else {
+        gallery.prepend(newImage);
+    }
 }
 
 // Close modals when clicking outside
@@ -652,12 +781,14 @@ if (localStorage.getItem('memories')) {
     const memories = JSON.parse(localStorage.getItem('memories'));
     const timeline = document.getElementById('timelineContainer');
     
-    // Clear default memories
-    timeline.innerHTML = '';
-    
-    memories.forEach(memory => {
-        addMemoryToTimeline(memory.date, memory.text);
-    });
+    if (timeline) {
+        // Clear default memories
+        timeline.innerHTML = '';
+        
+        memories.forEach(memory => {
+            addMemoryToTimeline(memory.date, memory.text);
+        });
+    }
 }
 
 // Load saved images if exist
@@ -673,3 +804,22 @@ if (localStorage.getItem('images')) {
 if (localStorage.getItem('password')) {
     password = localStorage.getItem('password');
 }
+
+// Fix for mobile viewport height issues
+function setMobileHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Set the height initially and on resize
+setMobileHeight();
+window.addEventListener('resize', () => {
+    setMobileHeight();
+});
+
+// Add event listener to detect orientation change on mobile
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        setMobileHeight();
+    }, 200);
+});
