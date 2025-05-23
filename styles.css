@@ -1732,482 +1732,47 @@ input:checked + .toggle-slider:before {
 /* Thêm vào cuối file styles.css */
 
 /* Shared view styles */
-.shared-only {
-    display: none;
+.shared-view .tabs,
+.shared-view .owner-only {
+    display: none !important; /* Quan trọng: buộc ẩn mọi phần owner-only */
+}
+
+.shared-view .letter-container {
+    padding: 0;
+}
+
+.shared-view .main-container {
+    padding-top: 10px;
 }
 
 .shared-title {
     text-align: center;
     margin-bottom: 25px;
+    display: none; /* Mặc định ẩn */
+}
+
+.shared-view .shared-title {
+    display: block; /* Hiển thị khi ở chế độ chia sẻ */
 }
 
 .shared-title h3 {
     font-size: 1.8rem;
     color: var(--primary);
     font-family: 'Dancing Script', cursive;
+    margin: 0 0 15px;
+}
+
+.shared-only {
+    display: none; /* Mặc định ẩn */
+}
+
+.shared-view .shared-only {
+    display: block; /* Hiển thị khi ở chế độ chia sẻ */
 }
 
 .return-to-edit {
     text-align: center;
     margin: 30px 0;
-}
-
-.return-to-edit button {
-    background: linear-gradient(45deg, var(--primary), var(--primary-dark));
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Comfortaa', sans-serif;
-    box-shadow: 0 8px 20px rgba(255, 110, 149, 0.3);
-    display: flex;
-    align-items: center;
-    margin: 0 auto;
-}
-
-.return-to-edit button i {
-    margin-right: 8px;
-}
-
-.return-to-edit button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(255, 110, 149, 0.4);
-}
-
-.share-description {
-    text-align: center;
-    margin-bottom: 25px;
-    color: var(--dark);
-    line-height: 1.6;
-}
-
-.password-protect {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-}
-
-.password-protect input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-/* Improved QR code styles */
-.qr-code {
-    padding: 15px;
-    background: #fff;
-    border: 2px solid var(--primary-light);
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    .main-container {
-        width: 95%;
-        padding: 20px;
-    }
-    
-    .love-days-container {
-        width: 90%;
-    }
-    
-    .love-days {
-        width: 100%;
-        padding: 15px 20px;
-    }
-    
-    .share-options {
-        grid-template-columns: 1fr;
-    }
-    
-    .qr-code-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 30px;
-    }
-    
-    .qr-code {
-        width: 180px;
-        height: 180px;
-    }
-    
-    .tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding-bottom: 15px;
-        margin-bottom: 20px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-    
-    .tabs::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .tab-btn {
-        flex-shrink: 0;
-        white-space: nowrap;
-    }
-    
-    .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    .gallery-item {
-        height: 150px;
-    }
-    
-    .timeline-item {
-        padding-left: 60px;
-        padding-right: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    header h1 {
-        font-size: 2.2rem;
-    }
-    
-    header p {
-        font-size: 1rem;
-    }
-    
-    .love-days-counter {
-        font-size: 1.8rem;
-    }
-    
-    .love-days-label {
-        font-size: 1rem;
-    }
-    
-    .tab-btn {
-        padding: 10px;
-        margin: 0 5px 10px 0;
-        font-size: 0.8rem;
-    }
-    
-    .section-title {
-        font-size: 1.3rem;
-    }
-    
-    .letter {
-        padding: 20px 15px;
-    }
-    
-    .edit-letter-btn, .save-letter, .add-memory {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-    
-    .gallery {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Fix for mobile keyboard causing layout issues */
-@media (max-height: 600px) {
-    .content {
-        padding-top: 20px;
-    }
-    
-    header {
-        margin-bottom: 20px;
-    }
-    
-    header h1 {
-        font-size: 2rem;
-    }
-    
-    header p {
-        font-size: 0.9rem;
-    }
-    
-    .love-days-container {
-        margin-bottom: 20px;
-    }
-}
-
-/* Highlight effect for days counter */
-@keyframes highlight {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.2);
-        color: var(--accent);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-#daysCount.highlight {
-    animation: highlight 1s ease;
-}
-
-/* Share Link Focus */
-#shareLink:focus {
-    outline: none;
-    border-color: var(--primary-light);
-    background-color: #fff;
-}
-/* Thêm vào cuối file styles.css */
-
-/* Mobile optimizations - Fixed */
-@media (max-width: 768px) {
-    body, html {
-        overflow-x: hidden;
-    }
-    
-    .main-container {
-        width: 95%;
-        padding: 20px 15px;
-        margin-bottom: 50px;
-    }
-    
-    header h1 {
-        font-size: 2.5rem;
-    }
-    
-    .love-days-container {
-        width: 90%;
-    }
-    
-    .love-days {
-        width: 100%;
-        padding: 15px 20px;
-    }
-    
-    .love-days-counter {
-        font-size: 2rem;
-    }
-    
-    .love-days-label {
-        font-size: 1rem;
-    }
-    
-    .tabs {
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        white-space: nowrap;
-        display: flex;
-        gap: 8px;
-    }
-    
-    .tabs::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .tab-btn {
-        flex-shrink: 0;
-        padding: 10px 15px;
-        margin: 0;
-        font-size: 0.9rem;
-    }
-    
-    .section-title {
-        font-size: 1.3rem;
-    }
-    
-    .letter {
-        padding: 20px 15px;
-        min-height: auto;
-        font-size: 0.95rem;
-    }
-    
-    .edit-letter-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-    
-    .letter-edit-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .letter-edit-buttons button {
-        width: 100%;
-    }
-    
-    .edit-letter {
-        min-height: 250px;
-    }
-    
-    .text-controls {
-        flex-direction: column;
-        padding: 12px;
-    }
-    
-    .control-group {
-        width: 100%;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-    }
-    
-    .effect-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        margin-right: 5px;
-        margin-bottom: 5px;
-    }
-    
-    .share-options {
-        grid-template-columns: 1fr;
-    }
-    
-    .qr-code-container {
-        margin-bottom: 30px;
-    }
-    
-    .share-buttons {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    
-    .timeline {
-        padding-left: 10px;
-    }
-    
-    .timeline::after {
-        left: 31px;
-    }
-    
-    .timeline-item {
-        width: 100%;
-        padding-left: 60px;
-        padding-right: 10px;
-    }
-    
-    .timeline-item:nth-child(even) {
-        left: 0;
-    }
-    
-    .timeline-item::after {
-        left: 18px;
-    }
-    
-    .timeline-item:nth-child(odd)::after {
-        right: auto;
-        left: 18px;
-    }
-    
-    .timeline-content {
-        border-radius: 20px !important;
-    }
-    
-    .gallery {
-        grid-template-columns: 1fr;
-    }
-    
-    .gallery-item {
-        height: 180px;
-    }
-    
-    .music-control {
-        width: 50px;
-        height: 50px;
-        bottom: 20px;
-        right: 20px;
-    }
-    
-    .music-control i {
-        font-size: 20px;
-    }
-    
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-    }
-    
-    .modal-form {
-        padding: 0;
-    }
-    
-    .return-to-edit {
-        margin-top: 20px;
-    }
-    
-    .return-to-edit button {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-}
-
-/* Specific fixes for very small screens */
-@media (max-width: 480px) {
-    header h1 {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-    
-    header p {
-        font-size: 0.9rem;
-    }
-    
-    .main-container {
-        padding: 15px 10px;
-    }
-    
-    .letter {
-        padding: 15px 12px;
-    }
-    
-    .password-container {
-        padding: 25px 15px;
-    }
-    
-    .password-container h2 {
-        font-size: 2.2rem;
-    }
-    
-    .tab-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-    
-    .tab-btn i {
-        margin-right: 4px;
-    }
-    
-    .notification {
-        max-width: 90%;
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-}
-
-/* Shared view specific styles */
-.shared-only {
-    display: none;
-}
-
-.shared-view .letter-container {
-    padding: 10px 0;
-}
-
-.shared-title {
-    text-align: center;
-    margin: 0 0 20px;
-}
-
-.shared-title h3 {
-    font-size: 1.8rem;
-    color: var(--primary);
-    font-family: 'Dancing Script', cursive;
-    margin: 0;
-}
-
-.return-to-edit {
-    text-align: center;
-    margin: 20px 0;
 }
 
 .return-to-edit button {
@@ -2229,25 +1794,471 @@ input:checked + .toggle-slider:before {
     margin-right: 8px;
 }
 
-/* Fix floating section title */
-.section-title {
-    display: block;
-    margin-bottom: 20px;
+.return-to-edit button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(255, 110, 149, 0.4);
 }
 
-/* Fix love days on mobile */
-.love-days::before, 
-.love-days::after {
+/* Tối ưu hiển thị bộ đếm ngày */
+.love-days-container {
+    margin-bottom: 30px;
+}
+
+.love-days {
+    text-align: center;
+    padding: 15px 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+    position: relative;
+}
+
+.love-days-label {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+.love-days-counter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#daysCount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-right: 5px;
+}
+
+.love-days-unit {
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+}
+
+/* Mobile optimizations - Fixed */
+@media (max-width: 768px) {
+    body, html {
+        overflow-x: hidden;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .content {
+        padding-top: 60px;
+    }
+    
+    header {
+        margin-bottom: 25px;
+    }
+    
+    header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 8px;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    .main-container {
+        width: 92%;
+        padding: 15px;
+        margin-bottom: 40px;
+    }
+    
+    .love-days-container {
+        width: 90%;
+        margin-bottom: 25px;
+    }
+    
+    .love-days {
+        width: 100%;
+        padding: 12px 20px;
+    }
+    
+    .love-days-label {
+        font-size: 1rem;
+    }
+    
+    #daysCount {
+        font-size: 2.2rem;
+    }
+    
+    .love-days-unit {
+        font-size: 1.3rem;
+    }
+    
+    /* Ẩn các icon trái tim bên trái/phải bộ đếm ngày */
+    .love-days::before, 
+    .love-days::after {
+        display: none;
+    }
+    
+    /* Tab navigation */
+    .tabs {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        position: relative;
+    }
+    
+    .tabs::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Edge */
+    }
+    
+    .tab-btn {
+        flex: 0 0 auto;
+        padding: 10px 15px;
+        margin: 0 5px 0 0;
+        font-size: 0.9rem;
+    }
+    
+    .tab-btn:last-child {
+        margin-right: 0;
+    }
+    
+    .tab-btn i {
+        margin-right: 5px;
+    }
+    
+    /* Letter */
+    .letter-container {
+        padding: 0;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+    
+    .letter {
+        padding: 20px 15px;
+        min-height: 250px;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .edit-letter-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .letter-edit-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .letter-edit-buttons button {
+        width: 100%;
+    }
+    
+    .edit-letter {
+        min-height: 200px;
+        padding: 15px;
+        font-size: 1rem;
+    }
+    
+    .text-controls {
+        flex-direction: column;
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .control-group {
+        width: 100%;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .font-selector, 
+    .color-picker {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .effect-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        margin: 2px;
+    }
+    
+    /* Gallery */
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .gallery-item {
+        height: 150px;
+        border-radius: 15px;
+    }
+    
+    .gallery-item .caption {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .add-image {
+        height: 150px;
+    }
+    
+    .add-image i {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+    
+    /* Timeline */
+    .timeline::after {
+        left: 30px;
+    }
+    
+    .timeline-item {
+        width: 100%;
+        padding-left: 60px;
+        padding-right: 10px;
+        left: 0 !important;
+    }
+    
+    .timeline-item::after {
+        left: 15px !important;
+        right: auto !important;
+    }
+    
+    .timeline-content {
+        border-radius: 15px !important;
+        padding: 15px;
+    }
+    
+    .timeline-date {
+        font-size: 1rem;
+    }
+    
+    .timeline-text {
+        font-size: 0.95rem;
+    }
+    
+    .add-memory {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Share */
+    .share-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .qr-code-container {
+        margin-bottom: 25px;
+    }
+    
+    .qr-code {
+        width: 160px;
+        height: 160px;
+        margin: 0 auto 10px;
+    }
+    
+    .share-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .copy-link input {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .copy-link button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    /* Settings */
+    .settings-section {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .settings-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .settings-option {
+        margin: 15px 0;
+        font-size: 0.95rem;
+    }
+    
+    .date-input {
+        padding: 10px;
+        margin-left: 10px;
+    }
+    
+    .password-input {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+    
+    .save-settings {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Music control */
+    .music-control {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .music-control i {
+        font-size: 20px;
+    }
+    
+    /* Modal */
+    .modal-content {
+        width: 90%;
+        max-width: 350px;
+        padding: 20px 15px;
+    }
+    
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    
+    .form-group label {
+        font-size: 0.95rem;
+    }
+    
+    .form-group input, 
+    .form-group textarea {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+    
+    .modal-submit {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+    
+    /* Notification */
+    .notification {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        max-width: 90%;
+        right: 5%;
+        top: 15px;
+    }
+    
+    .notification i {
+        font-size: 1rem;
+    }
+    
+    /* Hearts/Snow animation (less intensive for mobile) */
+    .hearts-container, 
+    .snow-container {
+        opacity: 0.7;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .tab-btn i {
+        margin-right: 4px;
+        font-size: 0.9rem;
+    }
+    
+    #daysCount {
+        font-size: 1.8rem;
+    }
+    
+    .love-days-unit {
+        font-size: 1.1rem;
+    }
+    
+    .shared-title h3 {
+        font-size: 1.5rem;
+    }
+    
+    .return-to-edit button {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Fix for very small height screens */
+@media (max-height: 500px) {
+    .content {
+        padding-top: 20px;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .love-days-container {
+        margin-bottom: 15px;
+    }
+    
+    .main-container {
+        margin-bottom: 30px;
+    }
+}
+
+/* Highlight animation for days counter */
+@keyframes highlight {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        color: var(--accent);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#daysCount.highlight {
+    animation: highlight 1s ease;
+}
+
+/* Fix for broken layout in shared view */
+.shared-view .letter-container {
+    margin-top: 10px;
+}
+
+.shared-view .section-title.owner-only {
     display: none;
 }
 
-/* Better visible days count */
-#daysCount {
-    font-weight: 700;
-    font-size: 2.2rem;
+.shared-view .main-container {
+    max-width: 800px;
 }
 
-/* Fixed hearts animation container */
-.hearts-container {
-    z-index: 0;
+.shared-view .letter {
+    margin-top: 0;
 }
