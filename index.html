@@ -51,7 +51,8 @@
         </div>
         
         <div class="main-container">
-            <div class="tabs">
+            <!-- Only show tabs for owners -->
+            <div class="tabs owner-only">
                 <button class="tab-btn active" data-tab="letter"><i class="fas fa-envelope"></i> Tâm Thư</button>
                 <button class="tab-btn" data-tab="gallery"><i class="fas fa-images"></i> Kỷ Niệm</button>
                 <button class="tab-btn" data-tab="timeline"><i class="fas fa-clock"></i> Dòng Thời Gian</button>
@@ -59,13 +60,18 @@
                 <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Cài Đặt</button>
             </div>
             
+            <!-- Shared view title -->
+            <div class="shared-title" style="display: none;">
+                <h3><i class="fas fa-envelope-open-heart"></i> Tâm Thư Dành Cho Bạn</h3>
+            </div>
+            
             <!-- Letter Tab -->
             <div class="tab-content active" id="letter">
                 <div class="letter-container">
                     <div class="letter-view-mode">
-                        <h3 class="section-title"><i class="fas fa-heart"></i> Tâm Thư Của Bạn</h3>
+                        <h3 class="section-title owner-only"><i class="fas fa-heart"></i> Tâm Thư Của Bạn</h3>
                         <div class="letter" id="letterDisplay"></div>
-                        <button class="edit-letter-btn" id="switchToEditMode"><i class="fas fa-edit"></i> Chỉnh Sửa Tâm Thư</button>
+                        <button class="edit-letter-btn owner-only" id="switchToEditMode"><i class="fas fa-edit"></i> Chỉnh Sửa Tâm Thư</button>
                     </div>
                     
                     <div class="letter-edit-mode" style="display: none;">
@@ -112,7 +118,7 @@ Anh yêu em nhiều lắm!"></textarea>
             <!-- Gallery Tab -->
             <div class="tab-content" id="gallery">
                 <div class="gallery">
-                    <div class="add-image" id="addImage">
+                    <div class="add-image owner-only" id="addImage">
                         <i class="fas fa-plus-circle"></i>
                         <p>Thêm ảnh kỷ niệm</p>
                     </div>
@@ -158,13 +164,15 @@ Anh yêu em nhiều lắm!"></textarea>
                         </div>
                     </div>
                 </div>
-                <button class="add-memory" id="addMemory"><i class="fas fa-plus"></i> Thêm Kỷ Niệm</button>
+                <button class="add-memory owner-only" id="addMemory"><i class="fas fa-plus"></i> Thêm Kỷ Niệm</button>
             </div>
             
             <!-- Share Tab -->
             <div class="tab-content" id="share">
                 <div class="share-container">
                     <h3 class="section-title"><i class="fas fa-share-alt"></i> Chia Sẻ Tâm Thư</h3>
+                    <p class="share-description">Tạo link để chia sẻ tâm thư với người thân yêu. Họ sẽ chỉ thấy nội dung tâm thư mà không cần mật khẩu.</p>
+                    
                     <div class="share-options">
                         <div class="qr-code-container">
                             <div class="qr-code" id="qrCode"></div>
@@ -179,8 +187,13 @@ Anh yêu em nhiều lắm!"></textarea>
                                 <button class="share-btn telegram"><i class="fab fa-telegram-plane"></i> Telegram</button>
                             </div>
                             <div class="copy-link">
-                                <input type="text" id="shareLink" readonly value="https://loveletters.com/share/abcd1234">
+                                <input type="text" id="shareLink" readonly>
                                 <button id="copyLinkBtn"><i class="fas fa-copy"></i> Copy</button>
+                            </div>
+                            <div class="password-protect">
+                                <label>
+                                    <input type="checkbox" id="requirePassword"> Yêu cầu mật khẩu khi xem
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -232,9 +245,14 @@ Anh yêu em nhiều lắm!"></textarea>
             </div>
         </div>
         
-        <!-- Music Control -->
-        <div class="music-control" id="musicControl">
+        <!-- Music Control (owner only) -->
+        <div class="music-control owner-only" id="musicControl">
             <i class="fas fa-music"></i>
+        </div>
+        
+        <!-- Return to edit mode button (for shared view) -->
+        <div class="return-to-edit shared-only" style="display: none;">
+            <button id="returnToEditBtn"><i class="fas fa-edit"></i> Trở về chế độ chỉnh sửa</button>
         </div>
         
         <!-- Audio Element -->
