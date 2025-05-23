@@ -1,7 +1,16 @@
 // Default password (You can change this)
-let password = "ngocphuong";
+let password = "np";
 let isOwnerMode = true;
 let requirePasswordForShared = false;
+
+// Check shared mode immediately when page loads
+function checkIfSharedMode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('share') !== null;
+}
+
+// Set shared mode flag
+isOwnerMode = !checkIfSharedMode();
 
 // Elements
 const loadingScreen = document.getElementById('loadingScreen');
@@ -44,50 +53,16 @@ const letterEditMode = document.querySelector('.letter-edit-mode');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 
-// Memory elements
-const addMemory = document.getElementById('addMemory');
-const memoryModal = document.getElementById('memoryModal');
-const closeMemoryModal = document.getElementById('closeMemoryModal');
-const memoryForm = document.getElementById('memoryForm');
-const memoryDate = document.getElementById('memoryDate');
-const memoryText = document.getElementById('memoryText');
-
-// Image elements
-const addImage = document.getElementById('addImage');
-const imageModal = document.getElementById('imageModal');
-const closeImageModal = document.getElementById('closeImageModal');
-const imageForm = document.getElementById('imageForm');
-const imageUrl = document.getElementById('imageUrl');
-const imageCaption = document.getElementById('imageCaption');
-
-// Share elements
-const qrCode = document.getElementById('qrCode');
-const shareLink = document.getElementById('shareLink');
-const copyLinkBtn = document.getElementById('copyLinkBtn');
-
-// Check if we're in shared view mode
-function checkSharedMode() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareParam = urlParams.get('share');
-    
-    if (shareParam) {
-        isOwnerMode = false;
+// Setup shared view mode
+function setupSharedMode() {
+    if (!isOwnerMode) {
+        // Add shared-view class to body
+        document.body.classList.add('shared-view');
         
-        // Hide ALL owner elements
+        // Hide all owner-only elements
         document.querySelectorAll('.owner-only').forEach(el => {
             el.style.display = 'none';
         });
-        
-        // Hide tabs completely
-        if (tabsContainer) {
-            tabsContainer.style.display = 'none';
-        }
-        
-        // Only show letter tab content
-        tabContents.forEach(content => {
-            content.style.display = 'none';
-        });
-        document.getElementById('letter').style.display = 'block';
         
         // Show shared-only elements
         document.querySelectorAll('.shared-only').forEach(el => {
@@ -99,11 +74,23 @@ function checkSharedMode() {
             sharedTitle.style.display = 'block';
         }
         
-        // If shared view requires password
-        if (urlParams.get('protected') === '1') {
-            // Still show password screen
-            passwordScreen.style.display = 'flex';
-        } else {
+        // Hide all tabs (even the container)
+        if (tabsContainer) {
+            tabsContainer.style.display = 'none';
+        }
+        
+        // Hide all tab contents except letter
+        tabContents.forEach(content => {
+            if (content.id !== 'letter') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        });
+        
+        // Check if we need password
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('protected') !== '1') {
             // Skip password for unprotected shares
             passwordScreen.style.display = 'none';
             initializeSharedView();
@@ -134,8 +121,8 @@ function initializeSharedView() {
 setTimeout(() => {
     loadingScreen.style.display = 'none';
     
-    // Check if we're in shared mode
-    checkSharedMode();
+    // Setup shared mode if needed
+    setupSharedMode();
 }, 2000);
 
 // Generate unique share link
@@ -177,7 +164,7 @@ if (requirePassword) {
 }
 
 // Set share link
-if (shareLink) {
+if (isOwnerMode && shareLink) {
     const uniqueShareLink = generateShareLink();
     shareLink.value = uniqueShareLink;
     generateQRCode(uniqueShareLink);
@@ -250,28 +237,30 @@ if (musicControl) {
     });
 }
 
-// Tab switching
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Remove active class from all buttons and contents
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
-        // Add active class to clicked button and corresponding content
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
+// Tab switching (only in owner mode)
+if (isOwnerMode) {
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
     });
-});
+}
 
-// Switch between view mode and edit mode for letter
-if (switchToEditMode) {
+// Switch between view mode and edit mode for letter (only in owner mode)
+if (isOwnerMode && switchToEditMode) {
     switchToEditMode.addEventListener('click', () => {
         letterViewMode.style.display = 'none';
         letterEditMode.style.display = 'block';
     });
 }
 
-if (cancelEdit) {
+if (isOwnerMode && cancelEdit) {
     cancelEdit.addEventListener('click', () => {
         letterViewMode.style.display = 'block';
         letterEditMode.style.display = 'none';
@@ -405,8 +394,9 @@ function showNotification(message, type = 'info') {
 function startHeartsAnimation() {
     heartsContainer.innerHTML = '';
     
-    // Create 50 hearts
-    for (let i = 0; i < 50; i++) {
+    // Create 30 hearts (reduced for mobile)
+    const heartCount = window.innerWidth < 768 ? 20 : 50;
+    for (let i = 0; i < heartCount; i++) {
         createHeart();
     }
     
@@ -449,8 +439,9 @@ function startSnowAnimation() {
     snowContainer.style.display = 'block';
     snowContainer.innerHTML = '';
     
-    // Create 100 snowflakes
-    for (let i = 0; i < 100; i++) {
+    // Create snowflakes (reduced for mobile)
+    const snowCount = window.innerWidth < 768 ? 50 : 100;
+    for (let i = 0; i < snowCount; i++) {
         createSnowflake();
     }
     
@@ -505,8 +496,9 @@ function createFirework() {
 }
 
 function createExplosion(x, y, color) {
-    // Create particles
-    for (let i = 0; i < 40; i++) {
+    // Create particles (reduced for mobile)
+    const particleCount = window.innerWidth < 768 ? 20 : 40;
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.classList.add('firework');
         particle.style.left = x + 'px';
@@ -541,36 +533,38 @@ function createExplosion(x, y, color) {
     }
 }
 
-// Toggle animations
-if (toggleHearts) {
-    toggleHearts.addEventListener('change', () => {
-        if (toggleHearts.checked) {
-            startHeartsAnimation();
-        } else {
-            heartsContainer.innerHTML = '';
-        }
-    });
-}
+// Toggle animations (only in owner mode)
+if (isOwnerMode) {
+    if (toggleHearts) {
+        toggleHearts.addEventListener('change', () => {
+            if (toggleHearts.checked) {
+                startHeartsAnimation();
+            } else {
+                heartsContainer.innerHTML = '';
+            }
+        });
+    }
 
-if (toggleSnow) {
-    toggleSnow.addEventListener('change', () => {
-        if (toggleSnow.checked) {
-            startSnowAnimation();
-        } else {
-            snowContainer.style.display = 'none';
-            snowContainer.innerHTML = '';
-        }
-    });
-}
+    if (toggleSnow) {
+        toggleSnow.addEventListener('change', () => {
+            if (toggleSnow.checked) {
+                startSnowAnimation();
+            } else {
+                snowContainer.style.display = 'none';
+                snowContainer.innerHTML = '';
+            }
+        });
+    }
 
-if (toggleFireworks) {
-    toggleFireworks.addEventListener('change', () => {
-        if (toggleFireworks.checked) {
-            startFireworksAnimation();
-        } else {
-            fireworksContainer.innerHTML = '';
-        }
-    });
+    if (toggleFireworks) {
+        toggleFireworks.addEventListener('change', () => {
+            if (toggleFireworks.checked) {
+                startFireworksAnimation();
+            } else {
+                fireworksContainer.innerHTML = '';
+            }
+        });
+    }
 }
 
 // Calculate days together
@@ -609,8 +603,8 @@ function updateDaysCount() {
 
 calculateDays();
 
-// Save anniversary date
-if (anniversaryDate) {
+// Save anniversary date (only in owner mode)
+if (isOwnerMode && anniversaryDate) {
     anniversaryDate.addEventListener('change', () => {
         localStorage.setItem('anniversaryDate', anniversaryDate.value);
         updateDaysCount();
@@ -618,8 +612,8 @@ if (anniversaryDate) {
     });
 }
 
-// Save new password
-if (savePassword) {
+// Save new password (only in owner mode)
+if (isOwnerMode && savePassword) {
     savePassword.addEventListener('click', () => {
         if (newPassword.value.trim() !== '') {
             password = newPassword.value;
@@ -629,187 +623,6 @@ if (savePassword) {
         } else {
             showNotification('Vui lòng nhập mật khẩu mới!', 'error');
         }
-    });
-}
-
-// Memory modal
-if (addMemory) {
-    addMemory.addEventListener('click', () => {
-        memoryModal.classList.add('show');
-    });
-}
-
-if (closeMemoryModal) {
-    closeMemoryModal.addEventListener('click', () => {
-        memoryModal.classList.remove('show');
-    });
-}
-
-if (memoryForm) {
-    memoryForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const date = formatDate(memoryDate.value);
-        const text = memoryText.value;
-        
-        if (date && text) {
-            addMemoryToTimeline(date, text);
-            
-            // Save to localStorage
-            const memories = JSON.parse(localStorage.getItem('memories') || '[]');
-            memories.push({ date, text });
-            localStorage.setItem('memories', JSON.stringify(memories));
-            
-            // Close modal and reset form
-            memoryModal.classList.remove('show');
-            memoryForm.reset();
-            
-            showNotification('Kỷ niệm đã được thêm thành công!', 'success');
-        }
-    });
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-function addMemoryToTimeline(date, text) {
-    const timeline = document.getElementById('timelineContainer');
-    if (!timeline) return;
-    
-    const newMemory = document.createElement('div');
-    newMemory.classList.add('timeline-item');
-    newMemory.innerHTML = `
-        <div class="timeline-content">
-            <div class="timeline-date"><i class="fas fa-calendar-alt"></i> ${date}</div>
-            <div class="timeline-text">${text}</div>
-        </div>
-    `;
-    
-    timeline.appendChild(newMemory);
-    
-    // Add animation
-    setTimeout(() => {
-        newMemory.style.opacity = 1;
-        newMemory.style.transform = 'translateY(0)';
-    }, 10);
-}
-
-// Image modal
-if (addImage) {
-    addImage.addEventListener('click', () => {
-        imageModal.classList.add('show');
-    });
-}
-
-if (closeImageModal) {
-    closeImageModal.addEventListener('click', () => {
-        imageModal.classList.remove('show');
-    });
-}
-
-if (imageForm) {
-    imageForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const url = imageUrl.value;
-        const caption = imageCaption.value;
-        
-        if (url) {
-            addImageToGallery(url, caption);
-            
-            // Save to localStorage
-            const images = JSON.parse(localStorage.getItem('images') || '[]');
-            images.push({ url, caption });
-            localStorage.setItem('images', JSON.stringify(images));
-            
-            // Close modal and reset form
-            imageModal.classList.remove('show');
-            imageForm.reset();
-            
-            showNotification('Ảnh đã được thêm thành công!', 'success');
-        }
-    });
-}
-
-function addImageToGallery(url, caption) {
-    const gallery = document.querySelector('.gallery');
-    if (!gallery) return;
-    
-    const addImageBtn = document.getElementById('addImage');
-    
-    const newImage = document.createElement('div');
-    newImage.classList.add('gallery-item');
-    newImage.innerHTML = `
-        <img src="${url}" alt="${caption}">
-        <div class="caption">${caption}</div>
-    `;
-    
-    // Insert before the "Add Image" button or at the beginning
-    if (addImageBtn) {
-        gallery.insertBefore(newImage, addImageBtn.nextSibling);
-    } else {
-        gallery.prepend(newImage);
-    }
-}
-
-// Close modals when clicking outside
-window.addEventListener('click', (e) => {
-    if (e.target === memoryModal) {
-        memoryModal.classList.remove('show');
-    }
-    if (e.target === imageModal) {
-        imageModal.classList.remove('show');
-    }
-});
-
-// Social media share buttons
-document.querySelectorAll('.share-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const url = encodeURIComponent(shareLink.value);
-        const text = encodeURIComponent('Xem tâm thư yêu thương của tôi!');
-        let shareUrl;
-        
-        if (btn.classList.contains('facebook')) {
-            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-        } else if (btn.classList.contains('twitter')) {
-            shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-        } else if (btn.classList.contains('whatsapp')) {
-            shareUrl = `https://api.whatsapp.com/send?text=${text} ${url}`;
-        } else if (btn.classList.contains('telegram')) {
-            shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
-        }
-        
-        window.open(shareUrl, '_blank', 'width=600,height=400');
-    });
-});
-
-// Load saved memories if exist
-if (localStorage.getItem('memories')) {
-    const memories = JSON.parse(localStorage.getItem('memories'));
-    const timeline = document.getElementById('timelineContainer');
-    
-    if (timeline) {
-        // Clear default memories
-        timeline.innerHTML = '';
-        
-        memories.forEach(memory => {
-            addMemoryToTimeline(memory.date, memory.text);
-        });
-    }
-}
-
-// Load saved images if exist
-if (localStorage.getItem('images')) {
-    const images = JSON.parse(localStorage.getItem('images'));
-    
-    images.forEach(image => {
-        addImageToGallery(image.url, image.caption);
     });
 }
 
