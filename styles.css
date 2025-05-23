@@ -1729,3 +1729,229 @@ input:checked + .toggle-slider:before {
         right: 20px;
     }
 }
+/* Thêm vào cuối file styles.css */
+
+/* Shared view styles */
+.shared-only {
+    display: none;
+}
+
+.shared-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.shared-title h3 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    font-family: 'Dancing Script', cursive;
+}
+
+.return-to-edit {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.return-to-edit button {
+    background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Comfortaa', sans-serif;
+    box-shadow: 0 8px 20px rgba(255, 110, 149, 0.3);
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.return-to-edit button i {
+    margin-right: 8px;
+}
+
+.return-to-edit button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(255, 110, 149, 0.4);
+}
+
+.share-description {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.password-protect {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.password-protect input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Improved QR code styles */
+.qr-code {
+    padding: 15px;
+    background: #fff;
+    border: 2px solid var(--primary-light);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .main-container {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .love-days-container {
+        width: 90%;
+    }
+    
+    .love-days {
+        width: 100%;
+        padding: 15px 20px;
+    }
+    
+    .share-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .qr-code-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .qr-code {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+    
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .gallery-item {
+        height: 150px;
+    }
+    
+    .timeline-item {
+        padding-left: 60px;
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    header p {
+        font-size: 1rem;
+    }
+    
+    .love-days-counter {
+        font-size: 1.8rem;
+    }
+    
+    .love-days-label {
+        font-size: 1rem;
+    }
+    
+    .tab-btn {
+        padding: 10px;
+        margin: 0 5px 10px 0;
+        font-size: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .letter {
+        padding: 20px 15px;
+    }
+    
+    .edit-letter-btn, .save-letter, .add-memory {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Fix for mobile keyboard causing layout issues */
+@media (max-height: 600px) {
+    .content {
+        padding-top: 20px;
+    }
+    
+    header {
+        margin-bottom: 20px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+    }
+    
+    .love-days-container {
+        margin-bottom: 20px;
+    }
+}
+
+/* Highlight effect for days counter */
+@keyframes highlight {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        color: var(--accent);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#daysCount.highlight {
+    animation: highlight 1s ease;
+}
+
+/* Share Link Focus */
+#shareLink:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background-color: #fff;
+}
