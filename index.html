@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tâm Thư Gửi Người Yêu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,18 +51,18 @@
         </div>
         
         <div class="main-container">
-            <!-- Only show tabs for owners -->
+            <!-- Shared title (chỉ hiển thị khi ở chế độ chia sẻ) -->
+            <div class="shared-title" style="display: none;">
+                <h3><i class="fas fa-envelope-open"></i> Tâm Thư Dành Cho Bạn</h3>
+            </div>
+            
+            <!-- Tabs (chỉ hiển thị khi là chủ sở hữu) -->
             <div class="tabs owner-only">
                 <button class="tab-btn active" data-tab="letter"><i class="fas fa-envelope"></i> Tâm Thư</button>
                 <button class="tab-btn" data-tab="gallery"><i class="fas fa-images"></i> Kỷ Niệm</button>
                 <button class="tab-btn" data-tab="timeline"><i class="fas fa-clock"></i> Dòng Thời Gian</button>
                 <button class="tab-btn" data-tab="share"><i class="fas fa-share-alt"></i> Chia Sẻ</button>
                 <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Cài Đặt</button>
-            </div>
-            
-            <!-- Shared view title -->
-            <div class="shared-title" style="display: none;">
-                <h3><i class="fas fa-envelope-open-heart"></i> Tâm Thư Dành Cho Bạn</h3>
             </div>
             
             <!-- Letter Tab -->
@@ -115,10 +115,10 @@ Anh yêu em nhiều lắm!"></textarea>
                 </div>
             </div>
             
-            <!-- Gallery Tab -->
-            <div class="tab-content" id="gallery">
+            <!-- Gallery Tab (chỉ hiển thị khi là chủ sở hữu) -->
+            <div class="tab-content owner-only" id="gallery">
                 <div class="gallery">
-                    <div class="add-image owner-only" id="addImage">
+                    <div class="add-image" id="addImage">
                         <i class="fas fa-plus-circle"></i>
                         <p>Thêm ảnh kỷ niệm</p>
                     </div>
@@ -142,8 +142,8 @@ Anh yêu em nhiều lắm!"></textarea>
                 </div>
             </div>
             
-            <!-- Timeline Tab -->
-            <div class="tab-content" id="timeline">
+            <!-- Timeline Tab (chỉ hiển thị khi là chủ sở hữu) -->
+            <div class="tab-content owner-only" id="timeline">
                 <div class="timeline" id="timelineContainer">
                     <div class="timeline-item">
                         <div class="timeline-content">
@@ -164,14 +164,14 @@ Anh yêu em nhiều lắm!"></textarea>
                         </div>
                     </div>
                 </div>
-                <button class="add-memory owner-only" id="addMemory"><i class="fas fa-plus"></i> Thêm Kỷ Niệm</button>
+                <button class="add-memory" id="addMemory"><i class="fas fa-plus"></i> Thêm Kỷ Niệm</button>
             </div>
             
-            <!-- Share Tab -->
-            <div class="tab-content" id="share">
+            <!-- Share Tab (chỉ hiển thị khi là chủ sở hữu) -->
+            <div class="tab-content owner-only" id="share">
                 <div class="share-container">
                     <h3 class="section-title"><i class="fas fa-share-alt"></i> Chia Sẻ Tâm Thư</h3>
-                    <p class="share-description">Tạo link để chia sẻ tâm thư với người thân yêu. Họ sẽ chỉ thấy nội dung tâm thư mà không cần mật khẩu.</p>
+                    <p class="share-description">Tạo link để chia sẻ tâm thư với người thân yêu. Họ sẽ chỉ thấy nội dung tâm thư mà không thấy các phần chỉnh sửa và cài đặt.</p>
                     
                     <div class="share-options">
                         <div class="qr-code-container">
@@ -200,8 +200,8 @@ Anh yêu em nhiều lắm!"></textarea>
                 </div>
             </div>
             
-            <!-- Settings Tab -->
-            <div class="tab-content" id="settings">
+            <!-- Settings Tab (chỉ hiển thị khi là chủ sở hữu) -->
+            <div class="tab-content owner-only" id="settings">
                 <div class="settings-section">
                     <h3><i class="fas fa-magic"></i> Cài Đặt Hiệu Ứng</h3>
                     <div class="settings-option">
@@ -245,12 +245,12 @@ Anh yêu em nhiều lắm!"></textarea>
             </div>
         </div>
         
-        <!-- Music Control (owner only) -->
+        <!-- Music Control (chỉ hiển thị khi là chủ sở hữu) -->
         <div class="music-control owner-only" id="musicControl">
             <i class="fas fa-music"></i>
         </div>
         
-        <!-- Return to edit mode button (for shared view) -->
+        <!-- Return to edit mode button (dành cho chế độ chia sẻ) -->
         <div class="return-to-edit shared-only" style="display: none;">
             <button id="returnToEditBtn"><i class="fas fa-edit"></i> Trở về chế độ chỉnh sửa</button>
         </div>
