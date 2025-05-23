@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tâm Thư Gửi Người Yêu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Pacifico&family=Quicksand:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffcdd2, #f8bbd0, #e1bee7);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .password-screen, .content {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .password-screen {
+            background: url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80') center center/cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .password-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .password-container h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #e91e63;
+        }
+        
+        .password-container p {
+            margin-bottom: 20px;
+        }
+        
+        .password-container input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .password-container button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .password-container button:hover {
+            background-color: #c2185b;
+            transform: translateY(-3px);
+        }
+        
+        .content {
+            display: none;
+            padding-top: 80px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #d81b60;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+        
+        .main-container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .love-days {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #e91e63;
+            font-weight: bold;
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .music-control i {
+            font-size: 24px;
+            color: #e91e63;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: #f8bbd0;
+            border: none;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active, .tab-btn:hover {
+            background-color: #e91e63;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Letter tab */
+        .letter {
+            font-family: 'Quicksand', sans-serif;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        
+        .edit-letter {
+            width: 100%;
+            min-height: 250px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Quicksand', sans-serif;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        
+        .text-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .font-selector, .color-picker {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .effect-btn {
+            padding: 8px 15px;
+            background-color: #f8bbd0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .effect-btn:hover {
+            background-color: #e91e63;
+            color: white;
+        }
+        
+        .save-letter {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        /* Gallery tab */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .add-image {
+            height: 200px;
+            border: 2px dashed #e91e63;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #e91e63;
+        }
+        
+        .add-image i {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        /* Timeline tab */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: #e91e63;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 3px solid #e91e63;
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .timeline-item:nth-child(odd)::after {
+            right: -13px;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -13px;
+        }
+        
+        .timeline-content {
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-text {
+            line-height: 1.6;
+        }
+        
+        .add-memory {
+            display: block;
+            margin: 20px auto;
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Hearts animation */
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .hearts-container {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            bottom: 0;
+            color: #e91e63;
+            font-size: 20px;
+            animation: heartFloat 15s linear infinite;
+        }
+        
+        /* Snow animation */
+        @keyframes snowFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .snow-container {
+            position: fixed;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+            display: none;
+        }
+        
+        .snowflake {
+            position: absolute;
+            top: 0;
+            color: white;
+            font-size: 15px;
+            text-shadow: 0 0 5px rgba(255,255,255,0.7);
+            animation: snowFall 10s linear infinite;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item::after {
+                left: 18px;
+            }
+            
+            .timeline-item:nth-child(odd)::after {
+                right: auto;
+                left: 18px;
+            }
+        }
+        
+        /* Custom font styles for the letter */
+        .font-dancing-script {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        
+        .font-quicksand {
+            font-family: 'Quicksand', sans-serif;
+        }
+        
+        /* Text effects */
+        .effect-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .effect-glow {
+            text-shadow: 0 0 10px #ff80ab, 0 0 20px #ff80ab;
+        }
+        
+        .effect-gradient {
+            background: linear-gradient(45deg, #ff80ab, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-container">
+            <h2>Tâm Thư Yêu Thương</h2>
+            <p>Nhập mật khẩu để mở lá thư tình này</p>
+            <input type="password" id="passwordInput" placeholder="Nhập mật khẩu...">
+            <button id="submitPassword">Mở Thư</button>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content" id="mainContent">
+        <header>
+            <h1>Tâm Thư Gửi Người Yêu</h1>
+            <p>Những lời yêu thương chân thành nhất...</p>
+        </header>
+        
+        <div class="love-days" id="loveDays">
+            Chúng ta đã yêu nhau được <span id="daysCount">0</span> ngày
+        </div>
+        
+        <div class="main-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="letter">Tâm Thư</button>
+                <button class="tab-btn" data-tab="gallery">Kỷ Niệm</button>
+                <button class="tab-btn" data-tab="timeline">Dòng Thời Gian</button>
+                <button class="tab-btn" data-tab="settings">Cài Đặt</button>
+            </div>
+            
+            <!-- Letter Tab -->
+            <div class="tab-content active" id="letter">
+                <div class="edit-controls">
+                    <textarea class="edit-letter" id="letterEditor" placeholder="Nhập tâm thư của bạn tại đây..."></textarea>
+                    <div class="text-controls">
+                        <select class="font-selector" id="fontSelector">
+                            <option value="font-quicksand">Quicksand</option>
+                            <option value="font-dancing-script">Dancing Script</option>
+                            <option value="font-pacifico">Pacifico</option>
+                        </select>
+                        <input type="color" class="color-picker" id="colorPicker" value="#e91e63">
+                        <button class="effect-btn" data-effect="effect-shadow">Bóng</button>
+                        <button class="effect-btn" data-effect="effect-glow">Phát Sáng</button>
+                        <button class="effect-btn" data-effect="effect-gradient">Gradient</button>
+                    </div>
+                    <button class="save-letter" id="saveLetter">Lưu Tâm Thư</button>
+                </div>
+                <div class="letter" id="letterDisplay"></div>
+            </div>
+            
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="gallery">
+                <div class="gallery">
+                    <div class="add-image" id="addImage">
+                        <i class="fas fa-plus"></i>
+                        <p>Thêm ảnh kỷ niệm</p>
+                    </div>
+                    <!-- Sample images -->
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1522119067110-34ab169d8507?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Kỷ niệm">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1556742031-c6961e8560b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Kỷ niệm">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1549221952-37f4399abb8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Kỷ niệm">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timeline Tab -->
+            <div class="tab-content" id="timeline">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">12/01/2024</div>
+                            <div class="timeline-text">Ngày chúng ta gặp nhau lần đầu tiên tại quán cafe ấy. Ánh mắt em đã làm trái tim anh rung động.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">14/02/2024</div>
+                            <div class="timeline-text">Valentine đầu tiên của chúng ta. Anh vẫn nhớ nụ cười rạng rỡ của em khi nhận được bó hoa hồng.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">20/03/2024</div>
+                            <div class="timeline-text">Chuyến du lịch đầu tiên cùng nhau. Biển xanh, cát trắng và nắng vàng - cùng với tình yêu của chúng ta.</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-memory" id="addMemory">Thêm Kỷ Niệm</button>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <h3>Cài Đặt Hiệu Ứng</h3>
+                <div style="margin: 20px 0;">
+                    <label>
+                        <input type="checkbox" id="toggleHearts" checked> Hiệu ứng trái tim bay
+                    </label>
+                </div>
+                <div style="margin: 20px 0;">
+                    <label>
+                        <input type="checkbox" id="toggleSnow"> Hiệu ứng tuyết rơi
+                    </label>
+                </div>
+                <div style="margin: 20px 0;">
+                    <label>
+                        <input type="checkbox" id="toggleFireworks"> Hiệu ứng pháo hoa
+                    </label>
+                </div>
+                
+                <h3 style="margin-top: 30px;">Cài Đặt Ngày Kỷ Niệm</h3>
+                <div style="margin: 20px 0;">
+                    <label>Ngày bắt đầu yêu nhau:</label>
+                    <input type="date" id="anniversaryDate" style="padding: 8px; margin-left: 10px;">
+                </div>
+                
+                <h3 style="margin-top: 30px;">Đổi Mật Khẩu</h3>
+                <div style="margin: 20px 0;">
+                    <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới" style="padding: 8px; width: 100%; max-width: 300px; margin-bottom: 10px;">
+                    <button id="savePassword" style="background-color: #e91e63; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Lưu Mật Khẩu</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Music Control -->
+        <div class="music-control" id="musicControl">
+            <i class="fas fa-music"></i>
+        </div>
+        
+        <!-- Audio Element -->
+        <audio id="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <!-- Hearts Animation Container -->
+        <div class="hearts-container" id="heartsContainer"></div>
+        
+        <!-- Snow Animation Container -->
+        <div class="snow-container" id="snowContainer"></div>
+        
+        <!-- Fireworks Container -->
+        <div class="fireworks-container" id="fireworksContainer"></div>
+    </div>
+    
+    <script>
+        // Default password (You can change this)
+        let password = "iloveyou";
+        
+        // Elements
+        const passwordScreen = document.getElementById('passwordScreen');
+        const mainContent = document.getElementById('mainContent');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitPassword = document.getElementById('submitPassword');
+        const musicControl = document.getElementById('musicControl');
+        const bgMusic = document.getElementById('bgMusic');
+        const heartsContainer = document.getElementById('heartsContainer');
+        const snowContainer = document.getElementById('snowContainer');
+        const fireworksContainer = document.getElementById('fireworksContainer');
+        const toggleHearts = document.getElementById('toggleHearts');
+        const toggleSnow = document.getElementById('toggleSnow');
+        const toggleFireworks = document.getElementById('toggleFireworks');
+        const daysCount = document.getElementById('daysCount');
+        const anniversaryDate = document.getElementById('anniversaryDate');
+        const savePassword = document.getElementById('savePassword');
+        const newPassword = document.getElementById('newPassword');
+        
+        // Letter elements
+        const letterEditor = document.getElementById('letterEditor');
+        const letterDisplay = document.getElementById('letterDisplay');
+        const fontSelector = document.getElementById('fontSelector');
+        const colorPicker = document.getElementById('colorPicker');
+        const effectBtns = document.querySelectorAll('.effect-btn');
+        const saveLetter = document.getElementById('saveLetter');
+        
+        // Tab elements
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Memory elements
+        const addMemory = document.getElementById('addMemory');
+        const addImage = document.getElementById('addImage');
+        
+        // Check password
+        submitPassword.addEventListener('click', () => {
+            if (passwordInput.value === password) {
+                passwordScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Play background music
+                bgMusic.volume = 0.3;
+                bgMusic.play();
+                
+                // Start animations if enabled
+                if (toggleHearts.checked) {
+                    startHeartsAnimation();
+                }
+                
+                if (toggleSnow.checked) {
+                    startSnowAnimation();
+                }
+                
+                if (toggleFireworks.checked) {
+                    startFireworksAnimation();
+                }
+            } else {
+                alert('Mật khẩu không đúng. Vui lòng thử lại!');
+            }
+        });
+        
+        // Allow Enter key to submit password
+        passwordInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                submitPassword.click();
+            }
+        });
+        
+        // Music control
+        let isMusicPlaying = false;
+        musicControl.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicControl.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                bgMusic.play();
+                musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+        
+        // Tab switching
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Letter formatting
+        let currentFont = 'font-quicksand';
+        let currentColor = '#e91e63';
+        let currentEffects = [];
+        
+        fontSelector.addEventListener('change', () => {
+            currentFont = fontSelector.value;
+            updateLetterPreview();
+        });
+        
+        colorPicker.addEventListener('input', () => {
+            currentColor = colorPicker.value;
+            updateLetterPreview();
+        });
+        
+        effectBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const effect = btn.dataset.effect;
+                
+                if (currentEffects.includes(effect)) {
+                    // Remove effect if already applied
+                    currentEffects = currentEffects.filter(e => e !== effect);
+                    btn.style.backgroundColor = '#f8bbd0';
+                } else {
+                    // Add effect
+                    currentEffects.push(effect);
+                    btn.style.backgroundColor = '#e91e63';
+                    btn.style.color = 'white';
+                }
+                
+                updateLetterPreview();
+            });
+        });
+        
+        letterEditor.addEventListener('input', updateLetterPreview);
+        
+        function updateLetterPreview() {
+            // Apply text formatting
+            letterDisplay.className = 'letter ' + currentFont + ' ' + currentEffects.join(' ');
+            letterDisplay.style.color = currentColor;
+            letterDisplay.textContent = letterEditor.value;
+        }
+        
+        saveLetter.addEventListener('click', () => {
+            // Save letter to localStorage
+            const letterData = {
+                text: letterEditor.value,
+                font: currentFont,
+                color: currentColor,
+                effects: currentEffects
+            };
+            
+            localStorage.setItem('savedLetter', JSON.stringify(letterData));
+            alert('Tâm thư đã được lưu!');
+        });
+        
+        // Load saved letter if exists
+        if (localStorage.getItem('savedLetter')) {
+            const letterData = JSON.parse(localStorage.getItem('savedLetter'));
+            letterEditor.value = letterData.text;
+            currentFont = letterData.font;
+            currentColor = letterData.color;
+            currentEffects = letterData.effects;
+            
+            // Update UI to match saved data
+            fontSelector.value = currentFont;
+            colorPicker.value = currentColor;
+            
+            effectBtns.forEach(btn => {
+                const effect = btn.dataset.effect;
+                if (currentEffects.includes(effect)) {
+                    btn.style.backgroundColor = '#e91e63';
+                    btn.style.color = 'white';
+                }
+            });
+            
+            updateLetterPreview();
+        }
+        
+        // Hearts animation
+        function startHeartsAnimation() {
+            heartsContainer.innerHTML = '';
+            
+            // Create 50 hearts
+            for (let i = 0; i < 50; i++) {
+                createHeart();
+            }
+            
+            // Continue creating hearts
+            setInterval(createHeart, 300);
+        }
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '<i class="fas fa-heart"></i>';
+            heart.classList.add('heart');
+            
+            // Random position and size
+            const size = Math.random() * 20 + 10;
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = size + 'px';
+            
+            // Random animation duration
+            const duration = Math.random() * 10 + 5;
+            heart.style.animationDuration = duration + 's';
+            
+            // Random delay
+            const delay = Math.random() * 5;
+            heart.style.animationDelay = delay + 's';
+            
+            heartsContainer.appendChild(heart);
+            
+            // Remove heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Snow animation
+        function startSnowAnimation() {
+            snowContainer.style.display = 'block';
+            snowContainer.innerHTML = '';
+            
+            // Create 100 snowflakes
+            for (let i = 0; i < 100; i++) {
+                createSnowflake();
+            }
+            
+            // Continue creating snowflakes
+            setInterval(createSnowflake, 200);
+        }
+        
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.innerHTML = '❄';
+            snowflake.classList.add('snowflake');
+            
+            // Random position and size
+            const size = Math.random() * 15 + 5;
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.fontSize = size + 'px';
+            
+            // Random animation duration
+            const duration = Math.random() * 15 + 5;
+            snowflake.style.animationDuration = duration + 's';
+            
+            // Random delay
+            const delay = Math.random() * 5;
+            snowflake.style.animationDelay = delay + 's';
+            
+            snowContainer.appendChild(snowflake);
+            
+            // Remove snowflake after animation completes
+            setTimeout(() => {
+                snowflake.remove();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Fireworks animation
+        function startFireworksAnimation() {
+            setInterval(createFirework, 2000);
+        }
+        
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.style.position = 'absolute';
+            firework.style.width = '5px';
+            firework.style.height = '5px';
+            firework.style.borderRadius = '50%';
+            
+            // Random position
+            const posX = Math.random() * window.innerWidth;
+            const posY = Math.random() * (window.innerHeight / 2);
+            firework.style.left = posX + 'px';
+            firework.style.top = posY + 'px';
+            
+            // Random color
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            firework.style.backgroundColor = color;
+            firework.style.boxShadow = `0 0 20px 5px ${color}`;
+            
+            fireworksContainer.appendChild(firework);
+            
+            // Animate explosion
+            setTimeout(() => {
+                firework.remove();
+                createExplosion(posX, posY, color);
+            }, 1000);
+        }
+        
+        function createExplosion(x, y, color) {
+            // Create particles
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '3px';
+                particle.style.height = '3px';
+                particle.style.borderRadius = '50%';
+                particle.style.backgroundColor = color;
+                particle.style.boxShadow = `0 0 10px 2px ${color}`;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                // Random direction
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 100 + 50;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                
+                // Animation
+                particle.animate(
+                    [
+                        { transform: 'translate(0, 0)', opacity: 1 },
+                        { transform: `translate(${vx}px, ${vy}px)`, opacity: 0 }
+                    ],
+                    {
+                        duration: 1000,
+                        easing: 'cubic-bezier(0, 0.5, 0.5, 1)'
+                    }
+                );
+                
+                fireworksContainer.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+        
+        // Toggle animations
+        toggleHearts.addEventListener('change', () => {
+            if (toggleHearts.checked) {
+                startHeartsAnimation();
+            } else {
+                heartsContainer.innerHTML = '';
+            }
+        });
+        
+        toggleSnow.addEventListener('change', () => {
+            if (toggleSnow.checked) {
+                startSnowAnimation();
+            } else {
+                snowContainer.style.display = 'none';
+                snowContainer.innerHTML = '';
+            }
+        });
+        
+        toggleFireworks.addEventListener('change', () => {
+            if (toggleFireworks.checked) {
+                startFireworksAnimation();
+            } else {
+                fireworksContainer.innerHTML = '';
+            }
+        });
+        
+        // Calculate days together
+        function calculateDays() {
+            if (!localStorage.getItem('anniversaryDate')) {
+                // Default to today if not set
+                localStorage.setItem('anniversaryDate', new Date().toISOString().split('T')[0]);
+            }
+            
+            const startDate = new Date(localStorage.getItem('anniversaryDate'));
+            const today = new Date();
+            const timeDiff = today.getTime() - startDate.getTime();
+            const dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+            
+            daysCount.textContent = dayDiff;
+            anniversaryDate.value = localStorage.getItem('anniversaryDate');
+        }
+        
+        calculateDays();
+        
+        // Save anniversary date
+        anniversaryDate.addEventListener('change', () => {
+            localStorage.setItem('anniversaryDate', anniversaryDate.value);
+            calculateDays();
+        });
+        
+        // Save new password
+        savePassword.addEventListener('click', () => {
+            if (newPassword.value.trim() !== '') {
+                password = newPassword.value;
+                localStorage.setItem('password', password);
+                alert('Mật khẩu đã được cập nhật!');
+                newPassword.value = '';
+            } else {
+                alert('Vui lòng nhập mật khẩu mới!');
+            }
+        });
+        
+        // Add memory
+        addMemory.addEventListener('click', () => {
+            const date = prompt('Nhập ngày (DD/MM/YYYY):');
+            const text = prompt('Nhập kỷ niệm của bạn:');
+            
+            if (date && text) {
+                const timeline = document.querySelector('.timeline');
+                const newMemory = document.createElement('div');
+                newMemory.classList.add('timeline-item');
+                newMemory.innerHTML = `
+                    <div class="timeline-content">
+                        <div class="timeline-date">${date}</div>
+                        <div class="timeline-text">${text}</div>
+                    </div>
+                `;
+                
+                timeline.appendChild(newMemory);
+                
+                // Save to localStorage
+                const memories = JSON.parse(localStorage.getItem('memories') || '[]');
+                memories.push({ date, text });
+                localStorage.setItem('memories', JSON.stringify(memories));
+            }
+        });
+        
+        // Add image
+        addImage.addEventListener('click', () => {
+            alert('Tính năng đang phát triển. Trong phiên bản đầy đủ, bạn có thể tải ảnh lên từ máy tính của mình.');
+        });
+        
+        // Load saved memories if exist
+        if (localStorage.getItem('memories')) {
+            const memories = JSON.parse(localStorage.getItem('memories'));
+            const timeline = document.querySelector('.timeline');
+            
+            // Clear default memories
+            timeline.innerHTML = '';
+            
+            memories.forEach(memory => {
+                const newMemory = document.createElement('div');
+                newMemory.classList.add('timeline-item');
+                newMemory.innerHTML = `
+                    <div class="timeline-content">
+                        <div class="timeline-date">${memory.date}</div>
+                        <div class="timeline-text">${memory.text}</div>
+                    </div>
+                `;
+                
+                timeline.appendChild(newMemory);
+            });
+        }
+        
+        // Load saved password if exists
+        if (localStorage.getItem('password')) {
+            password = localStorage.getItem('password');
+        }
+    </script>
+</body>
+</html>
