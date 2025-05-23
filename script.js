@@ -1,410 +1,538 @@
-// Default password (You can change this)
+// Default password
 let password = "np";
-let isOwnerMode = true;
-let requirePasswordForShared = false;
 
-// Check shared mode immediately when page loads
-function checkIfSharedMode() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('share') !== null;
+// Flag to determine if viewing in shared mode
+let isSharedMode = false;
+
+// Global element references
+const elements = {};
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize elements
+    cacheElements();
+    
+    // Check if we're in shared view mode
+    checkSharedMode();
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Load saved data
+    loadSavedData();
+    
+    // Calculate days counter
+    calculateDays();
+    
+    // Initialize letter preview
+    updateLetterPreview();
+    
+    // Simulate loading for 1.5 seconds
+    setTimeout(hideLoadingScreen, 1500);
+});
+
+// Cache DOM elements
+function cacheElements() {
+    // Main screens
+    elements.loadingScreen = document.getElementById('loadingScreen');
+    elements.passwordScreen = document.getElementById('passwordScreen');
+    elements.mainContent = document.getElementById('mainContent');
+    
+    // Password screen elements
+    elements.passwordInput = document.getElementById('passwordInput');
+    elements.submitPassword = document.getElementById('submitPassword');
+    
+    // Tab navigation
+    elements.tabsContainer = document.getElementById('tabsContainer');
+    elements.tabButtons = document.querySelectorAll('.tab-btn');
+    elements.tabContents = document.querySelectorAll('.tab-content');
+    
+    // Shared view elements
+    elements.sharedTitle = document.getElementById('sharedTitle');
+    elements.returnToEditContainer = document.getElementById('returnToEditContainer');
+    elements.returnToEditBtn = document.getElementById('returnToEditBtn');
+    
+    // Letter elements
+    elements.letterTitle = document.getElementById('letterTitle');
+    elements.letterDisplay = document.getElementById('letterDisplay');
+    elements.letterEditor = document.getElementById('letterEditor');
+    elements.letterViewMode = document.querySelector('.letter-view-mode');
+    elements.letterEditMode = document.querySelector('.letter-edit-mode');
+    elements.switchToEditMode = document.getElementById('switchToEditMode');
+    elements.cancelEdit = document.getElementById('cancelEdit');
+    elements.saveLetter = document.getElementById('saveLetter');
+    elements.fontSelector = document.getElementById('fontSelector');
+    elements.colorPicker = document.getElementById('colorPicker');
+    elements.effectBtns = document.querySelectorAll('.effect-btn');
+    
+    // Days counter
+    elements.daysCount = document.getElementById('daysCount');
+    
+    // Settings elements
+    elements.anniversaryDate = document.getElementById('anniversaryDate');
+    elements.newPassword = document.getElementById('newPassword');
+    elements.savePassword = document.getElementById('savePassword');
+    elements.toggleHearts = document.getElementById('toggleHearts');
+    elements.toggleSnow = document.getElementById('toggleSnow');
+    elements.toggleFireworks = document.getElementById('toggleFireworks');
+    
+    // Animation containers
+    elements.heartsContainer = document.getElementById('heartsContainer');
+    elements.snowContainer = document.getElementById('snowContainer');
+    elements.fireworksContainer = document.getElementById('fireworksContainer');
+    
+    // Music control
+    elements.musicControl = document.getElementById('musicControl');
+    elements.bgMusic = document.getElementById('bgMusic');
+    
+    // Notification
+    elements.notification = document.getElementById('notification');
+    elements.notificationText = document.getElementById('notificationText');
+    
+    // Memory elements
+    elements.addMemory = document.getElementById('addMemory');
+    elements.memoryModal = document.getElementById('memoryModal');
+    elements.closeMemoryModal = document.getElementById('closeMemoryModal');
+    elements.memoryForm = document.getElementById('memoryForm');
+    elements.memoryDate = document.getElementById('memoryDate');
+    elements.memoryText = document.getElementById('memoryText');
+    elements.timelineContainer = document.getElementById('timelineContainer');
+    
+    // Image elements
+    elements.addImage = document.getElementById('addImage');
+    elements.imageModal = document.getElementById('imageModal');
+    elements.closeImageModal = document.getElementById('closeImageModal');
+    elements.imageForm = document.getElementById('imageForm');
+    elements.imageUrl = document.getElementById('imageUrl');
+    elements.imageCaption = document.getElementById('imageCaption');
+    
+    // Share elements
+    elements.qrCode = document.getElementById('qrCode');
+    elements.shareLink = document.getElementById('shareLink');
+    elements.copyLinkBtn = document.getElementById('copyLinkBtn');
+    elements.requirePassword = document.getElementById('requirePassword');
 }
 
-// Set shared mode flag
-isOwnerMode = !checkIfSharedMode();
-
-// Elements
-const loadingScreen = document.getElementById('loadingScreen');
-const passwordScreen = document.getElementById('passwordScreen');
-const mainContent = document.getElementById('mainContent');
-const passwordInput = document.getElementById('passwordInput');
-const submitPassword = document.getElementById('submitPassword');
-const musicControl = document.getElementById('musicControl');
-const bgMusic = document.getElementById('bgMusic');
-const heartsContainer = document.getElementById('heartsContainer');
-const snowContainer = document.getElementById('snowContainer');
-const fireworksContainer = document.getElementById('fireworksContainer');
-const toggleHearts = document.getElementById('toggleHearts');
-const toggleSnow = document.getElementById('toggleSnow');
-const toggleFireworks = document.getElementById('toggleFireworks');
-const daysCount = document.getElementById('daysCount');
-const anniversaryDate = document.getElementById('anniversaryDate');
-const savePassword = document.getElementById('savePassword');
-const newPassword = document.getElementById('newPassword');
-const notification = document.getElementById('notification');
-const notificationText = document.getElementById('notificationText');
-const requirePassword = document.getElementById('requirePassword');
-const returnToEditBtn = document.getElementById('returnToEditBtn');
-const sharedTitle = document.querySelector('.shared-title');
-const tabsContainer = document.querySelector('.tabs');
-
-// Letter elements
-const letterEditor = document.getElementById('letterEditor');
-const letterDisplay = document.getElementById('letterDisplay');
-const fontSelector = document.getElementById('fontSelector');
-const colorPicker = document.getElementById('colorPicker');
-const effectBtns = document.querySelectorAll('.effect-btn');
-const saveLetter = document.getElementById('saveLetter');
-const switchToEditMode = document.getElementById('switchToEditMode');
-const cancelEdit = document.getElementById('cancelEdit');
-const letterViewMode = document.querySelector('.letter-view-mode');
-const letterEditMode = document.querySelector('.letter-edit-mode');
-
-// Tab elements
-const tabBtns = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
-
-// Setup shared view mode
-function setupSharedMode() {
-    if (!isOwnerMode) {
-        // Add shared-view class to body
-        document.body.classList.add('shared-view');
+// Check if we're in shared mode
+function checkSharedMode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check if there's a share parameter
+    if (urlParams.get('share')) {
+        isSharedMode = true;
+        document.body.classList.add('shared-mode');
         
-        // Hide all owner-only elements
-        document.querySelectorAll('.owner-only').forEach(el => {
-            el.style.display = 'none';
+        // Check if password protection is enabled
+        const isProtected = urlParams.get('protected') === '1';
+        
+        // If it's not password protected, skip the password screen
+        if (!isProtected) {
+            elements.passwordScreen.style.display = 'none';
+            showMainContent();
+        }
+    }
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Password submit
+    elements.submitPassword.addEventListener('click', checkPassword);
+    elements.passwordInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+    
+    // Tab switching
+    elements.tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchTab(btn.dataset.tab);
         });
+    });
+    
+    // Letter editing
+    if (elements.switchToEditMode) {
+        elements.switchToEditMode.addEventListener('click', showLetterEditMode);
+    }
+    
+    if (elements.cancelEdit) {
+        elements.cancelEdit.addEventListener('click', hideLetterEditMode);
+    }
+    
+    if (elements.saveLetter) {
+        elements.saveLetter.addEventListener('click', saveLetter);
+    }
+    
+    // Letter formatting
+    if (elements.fontSelector) {
+        elements.fontSelector.addEventListener('change', updateLetterPreview);
+    }
+    
+    if (elements.colorPicker) {
+        elements.colorPicker.addEventListener('input', updateLetterPreview);
+    }
+    
+    if (elements.letterEditor) {
+        elements.letterEditor.addEventListener('input', updateLetterPreview);
+    }
+    
+    elements.effectBtns.forEach(btn => {
+        btn.addEventListener('click', toggleEffect);
+    });
+    
+    // Music control
+    if (elements.musicControl) {
+        elements.musicControl.addEventListener('click', toggleMusic);
+    }
+    
+    // Animation toggles
+    if (elements.toggleHearts) {
+        elements.toggleHearts.addEventListener('change', toggleHeartsAnimation);
+    }
+    
+    if (elements.toggleSnow) {
+        elements.toggleSnow.addEventListener('change', toggleSnowAnimation);
+    }
+    
+    if (elements.toggleFireworks) {
+        elements.toggleFireworks.addEventListener('change', toggleFireworksAnimation);
+    }
+    
+    // Date picker
+    if (elements.anniversaryDate) {
+        elements.anniversaryDate.addEventListener('change', saveAnniversaryDate);
+    }
+    
+    // Password change
+    if (elements.savePassword) {
+        elements.savePassword.addEventListener('click', changePassword);
+    }
+    
+    // Return to edit mode
+    if (elements.returnToEditBtn) {
+        elements.returnToEditBtn.addEventListener('click', returnToEditMode);
+    }
+    
+    // Memory modal
+    if (elements.addMemory) {
+        elements.addMemory.addEventListener('click', showMemoryModal);
+    }
+    
+    if (elements.closeMemoryModal) {
+        elements.closeMemoryModal.addEventListener('click', hideMemoryModal);
+    }
+    
+    if (elements.memoryForm) {
+        elements.memoryForm.addEventListener('submit', saveMemory);
+    }
+    
+    // Image modal
+    if (elements.addImage) {
+        elements.addImage.addEventListener('click', showImageModal);
+    }
+    
+    if (elements.closeImageModal) {
+        elements.closeImageModal.addEventListener('click', hideImageModal);
+    }
+    
+    if (elements.imageForm) {
+        elements.imageForm.addEventListener('submit', saveImage);
+    }
+    
+    // Share link
+    if (elements.requirePassword) {
+        elements.requirePassword.addEventListener('change', updateShareLink);
+    }
+    
+    if (elements.copyLinkBtn) {
+        elements.copyLinkBtn.addEventListener('click', copyShareLink);
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === elements.memoryModal) {
+            hideMemoryModal();
+        }
+        if (e.target === elements.imageModal) {
+            hideImageModal();
+        }
+    });
+    
+    // Social media share
+    document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', shareSocial);
+    });
+}
+
+// Load saved data from localStorage
+function loadSavedData() {
+    // Load saved password if exists
+    if (localStorage.getItem('password')) {
+        password = localStorage.getItem('password');
+    }
+    
+    // Load saved letter
+    if (localStorage.getItem('savedLetter')) {
+        const letterData = JSON.parse(localStorage.getItem('savedLetter'));
         
-        // Show shared-only elements
-        document.querySelectorAll('.shared-only').forEach(el => {
-            el.style.display = 'block';
-        });
-        
-        // Show shared title
-        if (sharedTitle) {
-            sharedTitle.style.display = 'block';
+        if (elements.letterEditor) {
+            elements.letterEditor.value = letterData.text || '';
         }
         
-        // Hide all tabs (even the container)
-        if (tabsContainer) {
-            tabsContainer.style.display = 'none';
+        // Apply formatting
+        if (elements.fontSelector) {
+            elements.fontSelector.value = letterData.font || 'font-quicksand';
         }
         
-        // Hide all tab contents except letter
-        tabContents.forEach(content => {
-            if (content.id !== 'letter') {
-                content.style.display = 'none';
-            } else {
-                content.style.display = 'block';
-            }
-        });
-        
-        // Check if we need password
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('protected') !== '1') {
-            // Skip password for unprotected shares
-            passwordScreen.style.display = 'none';
-            initializeSharedView();
+        if (elements.colorPicker) {
+            elements.colorPicker.value = letterData.color || '#ff6e95';
         }
         
-        // Return button functionality
-        if (returnToEditBtn) {
-            returnToEditBtn.addEventListener('click', () => {
-                window.location.href = window.location.pathname;
+        // Apply effects
+        if (letterData.effects && letterData.effects.length > 0) {
+            elements.effectBtns.forEach(btn => {
+                if (letterData.effects.includes(btn.dataset.effect)) {
+                    btn.classList.add('active');
+                }
             });
         }
     }
-}
-
-// Initialize shared view
-function initializeSharedView() {
-    mainContent.style.display = 'block';
     
-    // Start heart animation
-    startHeartsAnimation();
-    
-    // Play background music at lower volume
-    bgMusic.volume = 0.2;
-    bgMusic.play();
-}
-
-// Simulating loading time
-setTimeout(() => {
-    loadingScreen.style.display = 'none';
-    
-    // Setup shared mode if needed
-    setupSharedMode();
-}, 2000);
-
-// Generate unique share link
-function generateShareLink() {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 8; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    // Load animation settings
+    if (localStorage.getItem('animations')) {
+        const animations = JSON.parse(localStorage.getItem('animations'));
+        
+        if (elements.toggleHearts) {
+            elements.toggleHearts.checked = animations.hearts ?? true;
+        }
+        
+        if (elements.toggleSnow) {
+            elements.toggleSnow.checked = animations.snow ?? false;
+        }
+        
+        if (elements.toggleFireworks) {
+            elements.toggleFireworks.checked = animations.fireworks ?? false;
+        }
     }
     
-    const baseUrl = window.location.origin + window.location.pathname;
-    const protectedParam = requirePasswordForShared ? '&protected=1' : '';
-    return `${baseUrl}?share=${result}${protectedParam}`;
-}
-
-// Generate QR code
-function generateQRCode(url) {
-    if (window.QRCode && qrCode) {
-        qrCode.innerHTML = '';
-        new QRCode(qrCode, {
-            text: url,
-            width: 180,
-            height: 180,
-            colorDark: '#ff6e95',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
+    // Set share link
+    if (!isSharedMode && elements.shareLink) {
+        const uniqueShareLink = generateShareLink();
+        elements.shareLink.value = uniqueShareLink;
+        generateQRCode(uniqueShareLink);
+    }
+    
+    // Load saved memories
+    if (localStorage.getItem('memories') && elements.timelineContainer) {
+        const memories = JSON.parse(localStorage.getItem('memories'));
+        
+        // Clear default memories
+        elements.timelineContainer.innerHTML = '';
+        
+        // Add saved memories
+        memories.forEach(memory => {
+            addMemoryToTimeline(memory.date, memory.text);
+        });
+    }
+    
+    // Load saved images
+    if (localStorage.getItem('images')) {
+        const images = JSON.parse(localStorage.getItem('images'));
+        
+        // Add saved images
+        images.forEach(image => {
+            addImageToGallery(image.url, image.caption);
         });
     }
 }
 
-// Update share link when checkbox changes
-if (requirePassword) {
-    requirePassword.addEventListener('change', () => {
-        requirePasswordForShared = requirePassword.checked;
-        const newShareLink = generateShareLink();
-        shareLink.value = newShareLink;
-        generateQRCode(newShareLink);
-    });
-}
-
-// Set share link
-if (isOwnerMode && shareLink) {
-    const uniqueShareLink = generateShareLink();
-    shareLink.value = uniqueShareLink;
-    generateQRCode(uniqueShareLink);
-}
-
-// Copy share link
-if (copyLinkBtn) {
-    copyLinkBtn.addEventListener('click', () => {
-        shareLink.select();
-        document.execCommand('copy');
-        showNotification('Đường dẫn đã được sao chép!', 'success');
-    });
+// Hide loading screen
+function hideLoadingScreen() {
+    if (elements.loadingScreen) {
+        elements.loadingScreen.style.display = 'none';
+    }
 }
 
 // Check password
-submitPassword.addEventListener('click', () => {
-    if (passwordInput.value === password) {
-        passwordScreen.style.display = 'none';
+function checkPassword() {
+    if (elements.passwordInput.value === password) {
+        elements.passwordScreen.style.display = 'none';
+        showMainContent();
         
-        if (isOwnerMode) {
-            mainContent.style.display = 'block';
-            
-            // Play background music
-            bgMusic.volume = 0.3;
-            bgMusic.play();
-            
-            // Start animations if enabled
-            if (toggleHearts.checked) {
-                startHeartsAnimation();
-            }
-            
-            if (toggleSnow.checked) {
-                startSnowAnimation();
-            }
-            
-            if (toggleFireworks.checked) {
-                startFireworksAnimation();
-            }
-        } else {
-            initializeSharedView();
+        // Play background music
+        if (elements.bgMusic) {
+            elements.bgMusic.volume = 0.3;
+            elements.bgMusic.play();
         }
     } else {
-        passwordInput.classList.add('shake');
+        elements.passwordInput.classList.add('shake');
         setTimeout(() => {
-            passwordInput.classList.remove('shake');
+            elements.passwordInput.classList.remove('shake');
         }, 500);
         showNotification('Mật khẩu không đúng. Vui lòng thử lại!', 'error');
     }
-});
-
-// Allow Enter key to submit password
-passwordInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-        submitPassword.click();
-    }
-});
-
-// Music control
-let isMusicPlaying = false;
-if (musicControl) {
-    musicControl.addEventListener('click', () => {
-        if (isMusicPlaying) {
-            bgMusic.pause();
-            musicControl.innerHTML = '<i class="fas fa-music"></i>';
-        } else {
-            bgMusic.play();
-            musicControl.innerHTML = '<i class="fas fa-pause"></i>';
-        }
-        isMusicPlaying = !isMusicPlaying;
-    });
 }
 
-// Tab switching (only in owner mode)
-if (isOwnerMode) {
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove active class from all buttons and contents
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
+// Show main content
+function showMainContent() {
+    if (elements.mainContent) {
+        elements.mainContent.style.display = 'block';
+        
+        // Start animations based on settings
+        if (!isSharedMode) {
+            if (elements.toggleHearts && elements.toggleHearts.checked) {
+                startHeartsAnimation();
+            }
             
-            // Add active class to clicked button and corresponding content
-            btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.add('active');
-        });
-    });
-}
-
-// Switch between view mode and edit mode for letter (only in owner mode)
-if (isOwnerMode && switchToEditMode) {
-    switchToEditMode.addEventListener('click', () => {
-        letterViewMode.style.display = 'none';
-        letterEditMode.style.display = 'block';
-    });
-}
-
-if (isOwnerMode && cancelEdit) {
-    cancelEdit.addEventListener('click', () => {
-        letterViewMode.style.display = 'block';
-        letterEditMode.style.display = 'none';
-    });
-}
-
-// Letter formatting
-let currentFont = 'font-quicksand';
-let currentColor = '#ff6e95';
-let currentEffects = [];
-
-if (fontSelector) {
-    fontSelector.addEventListener('change', () => {
-        currentFont = fontSelector.value;
-        updateLetterPreview();
-    });
-}
-
-if (colorPicker) {
-    colorPicker.addEventListener('input', () => {
-        currentColor = colorPicker.value;
-        updateLetterPreview();
-    });
-}
-
-effectBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const effect = btn.dataset.effect;
-        
-        if (currentEffects.includes(effect)) {
-            // Remove effect if already applied
-            currentEffects = currentEffects.filter(e => e !== effect);
-            btn.classList.remove('active');
+            if (elements.toggleSnow && elements.toggleSnow.checked) {
+                startSnowAnimation();
+            }
+            
+            if (elements.toggleFireworks && elements.toggleFireworks.checked) {
+                startFireworksAnimation();
+            }
         } else {
-            // Add effect
-            currentEffects.push(effect);
-            btn.classList.add('active');
+            // In shared mode, only show hearts animation
+            startHeartsAnimation();
         }
-        
-        updateLetterPreview();
-    });
-});
+    }
+}
 
-if (letterEditor) {
-    letterEditor.addEventListener('input', updateLetterPreview);
+// Switch between tabs
+function switchTab(tabId) {
+    // Remove active class from all buttons and contents
+    elements.tabButtons.forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    elements.tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Add active class to clicked button and corresponding content
+    const activeTabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (activeTabBtn) {
+        activeTabBtn.classList.add('active');
+    }
+    
+    const activeContent = document.getElementById(tabId);
+    if (activeContent) {
+        activeContent.classList.add('active');
+    }
+}
+
+// Letter Editing Functions
+function showLetterEditMode() {
+    elements.letterViewMode.style.display = 'none';
+    elements.letterEditMode.style.display = 'block';
+}
+
+function hideLetterEditMode() {
+    elements.letterViewMode.style.display = 'block';
+    elements.letterEditMode.style.display = 'none';
 }
 
 function updateLetterPreview() {
-    // Apply text formatting
-    if (letterDisplay) {
-        letterDisplay.className = 'letter ' + currentFont + ' ' + currentEffects.join(' ');
-        letterDisplay.style.color = currentColor;
-        letterDisplay.textContent = letterEditor ? letterEditor.value : '';
-    }
-}
-
-if (saveLetter) {
-    saveLetter.addEventListener('click', () => {
-        // Save letter to localStorage
-        const letterData = {
-            text: letterEditor.value,
-            font: currentFont,
-            color: currentColor,
-            effects: currentEffects
-        };
-        
-        localStorage.setItem('savedLetter', JSON.stringify(letterData));
-        showNotification('Tâm thư đã được lưu thành công!', 'success');
-        
-        // Switch back to view mode
-        letterViewMode.style.display = 'block';
-        letterEditMode.style.display = 'none';
-        
-        // Trigger fireworks
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-                createFirework();
-            }, i * 300);
-        }
-    });
-}
-
-// Load saved letter if exists
-if (localStorage.getItem('savedLetter')) {
-    const letterData = JSON.parse(localStorage.getItem('savedLetter'));
-    if (letterEditor) letterEditor.value = letterData.text;
-    currentFont = letterData.font;
-    currentColor = letterData.color;
-    currentEffects = letterData.effects;
+    if (!elements.letterDisplay) return;
     
-    // Update UI to match saved data
-    if (fontSelector) fontSelector.value = currentFont;
-    if (colorPicker) colorPicker.value = currentColor;
+    // Get current font
+    const font = elements.fontSelector ? elements.fontSelector.value : 'font-quicksand';
     
-    effectBtns.forEach(btn => {
-        const effect = btn.dataset.effect;
-        if (currentEffects.includes(effect)) {
-            btn.classList.add('active');
+    // Get current color
+    const color = elements.colorPicker ? elements.colorPicker.value : '#ff6e95';
+    
+    // Get active effects
+    let effects = [];
+    elements.effectBtns.forEach(btn => {
+        if (btn.classList.contains('active')) {
+            effects.push(btn.dataset.effect);
         }
     });
     
-    updateLetterPreview();
-} else {
-    // Initialize with default text
-    updateLetterPreview();
+    // Get text content
+    const text = elements.letterEditor ? elements.letterEditor.value : '';
+    
+    // Update the preview
+    elements.letterDisplay.className = 'letter ' + font + ' ' + effects.join(' ');
+    elements.letterDisplay.style.color = color;
+    elements.letterDisplay.textContent = text;
 }
 
-// Show notification
-function showNotification(message, type = 'info') {
-    notificationText.textContent = message;
-    notification.className = 'notification';
+function toggleEffect() {
+    const effect = this.dataset.effect;
     
-    if (type === 'success') {
-        notification.classList.add('success');
-        notification.innerHTML = '<i class="fas fa-check-circle"></i>' + message;
-    } else if (type === 'error') {
-        notification.classList.add('error');
-        notification.innerHTML = '<i class="fas fa-exclamation-circle"></i>' + message;
+    if (this.classList.contains('active')) {
+        this.classList.remove('active');
     } else {
-        notification.innerHTML = '<i class="fas fa-info-circle"></i>' + message;
+        this.classList.add('active');
     }
     
-    notification.classList.add('show');
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
+    updateLetterPreview();
 }
 
-// Hearts animation
-function startHeartsAnimation() {
-    heartsContainer.innerHTML = '';
+function saveLetter(e) {
+    if (e) e.preventDefault();
     
-    // Create 30 hearts (reduced for mobile)
-    const heartCount = window.innerWidth < 768 ? 20 : 50;
+    // Get current font
+    const font = elements.fontSelector ? elements.fontSelector.value : 'font-quicksand';
+    
+    // Get current color
+    const color = elements.colorPicker ? elements.colorPicker.value : '#ff6e95';
+    
+    // Get active effects
+    let effects = [];
+    elements.effectBtns.forEach(btn => {
+        if (btn.classList.contains('active')) {
+            effects.push(btn.dataset.effect);
+        }
+    });
+    
+    // Get text content
+    const text = elements.letterEditor ? elements.letterEditor.value : '';
+    
+    // Save to localStorage
+    const letterData = { text, font, color, effects };
+    localStorage.setItem('savedLetter', JSON.stringify(letterData));
+    
+    // Show success message
+    showNotification('Tâm thư đã được lưu thành công!', 'success');
+    
+    // Switch back to view mode
+    hideLetterEditMode();
+    
+    // Trigger fireworks
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            createFirework();
+        }, i * 300);
+    }
+    
+    // Update share link if necessary
+    if (elements.shareLink) {
+        updateShareLink();
+    }
+}
+
+// Animation Functions
+function startHeartsAnimation() {
+    if (!elements.heartsContainer) return;
+    
+    // Clear existing hearts
+    elements.heartsContainer.innerHTML = '';
+    
+    // Create initial hearts
+    const heartCount = window.innerWidth < 768 ? 20 : 40;
     for (let i = 0; i < heartCount; i++) {
         createHeart();
     }
     
     // Continue creating hearts
-    setInterval(createHeart, 300);
+    heartInterval = setInterval(createHeart, 300);
 }
 
 function createHeart() {
+    if (!elements.heartsContainer) return;
+    
     const heart = document.createElement('div');
     heart.innerHTML = '<i class="fas fa-heart"></i>';
     heart.classList.add('heart');
@@ -426,30 +554,52 @@ function createHeart() {
     const colors = ['#ff6e95', '#ff9eb5', '#ff5376', '#ff8da6'];
     heart.style.color = colors[Math.floor(Math.random() * colors.length)];
     
-    heartsContainer.appendChild(heart);
+    elements.heartsContainer.appendChild(heart);
     
     // Remove heart after animation completes
     setTimeout(() => {
-        heart.remove();
+        if (heart.parentNode === elements.heartsContainer) {
+            elements.heartsContainer.removeChild(heart);
+        }
     }, (duration + delay) * 1000);
 }
 
-// Snow animation
-function startSnowAnimation() {
-    snowContainer.style.display = 'block';
-    snowContainer.innerHTML = '';
+function toggleHeartsAnimation() {
+    if (!elements.heartsContainer) return;
     
-    // Create snowflakes (reduced for mobile)
+    if (elements.toggleHearts && elements.toggleHearts.checked) {
+        startHeartsAnimation();
+    } else {
+        clearInterval(heartInterval);
+        elements.heartsContainer.innerHTML = '';
+    }
+    
+    // Save setting
+    saveAnimationSettings();
+}
+
+function startSnowAnimation() {
+    if (!elements.snowContainer) return;
+    
+    // Display snow container
+    elements.snowContainer.style.display = 'block';
+    
+    // Clear existing snowflakes
+    elements.snowContainer.innerHTML = '';
+    
+    // Create initial snowflakes
     const snowCount = window.innerWidth < 768 ? 50 : 100;
     for (let i = 0; i < snowCount; i++) {
         createSnowflake();
     }
     
     // Continue creating snowflakes
-    setInterval(createSnowflake, 200);
+    snowInterval = setInterval(createSnowflake, 200);
 }
 
 function createSnowflake() {
+    if (!elements.snowContainer) return;
+    
     const snowflake = document.createElement('div');
     snowflake.innerHTML = '❄';
     snowflake.classList.add('snowflake');
@@ -467,20 +617,41 @@ function createSnowflake() {
     const delay = Math.random() * 5;
     snowflake.style.animationDelay = delay + 's';
     
-    snowContainer.appendChild(snowflake);
+    elements.snowContainer.appendChild(snowflake);
     
     // Remove snowflake after animation completes
     setTimeout(() => {
-        snowflake.remove();
+        if (snowflake.parentNode === elements.snowContainer) {
+            elements.snowContainer.removeChild(snowflake);
+        }
     }, (duration + delay) * 1000);
 }
 
-// Fireworks animation
+function toggleSnowAnimation() {
+    if (!elements.snowContainer) return;
+    
+    if (elements.toggleSnow && elements.toggleSnow.checked) {
+        startSnowAnimation();
+    } else {
+        clearInterval(snowInterval);
+        elements.snowContainer.style.display = 'none';
+        elements.snowContainer.innerHTML = '';
+    }
+    
+    // Save setting
+    saveAnimationSettings();
+}
+
 function startFireworksAnimation() {
-    setInterval(createFirework, 2000);
+    if (!elements.fireworksContainer) return;
+    
+    // Start creating fireworks
+    fireworksInterval = setInterval(createFirework, 2000);
 }
 
 function createFirework() {
+    if (!elements.fireworksContainer) return;
+    
     // Random position
     const posX = Math.random() * window.innerWidth;
     const posY = Math.random() * (window.innerHeight / 2);
@@ -496,7 +667,9 @@ function createFirework() {
 }
 
 function createExplosion(x, y, color) {
-    // Create particles (reduced for mobile)
+    if (!elements.fireworksContainer) return;
+    
+    // Create particles
     const particleCount = window.innerWidth < 768 ? 20 : 40;
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
@@ -512,7 +685,7 @@ function createExplosion(x, y, color) {
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
         
-        // Animation
+        // Add animation
         particle.animate(
             [
                 { transform: 'translate(0, 0) scale(0)', opacity: 1 },
@@ -524,65 +697,64 @@ function createExplosion(x, y, color) {
             }
         );
         
-        fireworksContainer.appendChild(particle);
+        elements.fireworksContainer.appendChild(particle);
         
         // Remove particle after animation
         setTimeout(() => {
-            particle.remove();
+            if (particle.parentNode === elements.fireworksContainer) {
+                elements.fireworksContainer.removeChild(particle);
+            }
         }, 1500);
     }
 }
 
-// Toggle animations (only in owner mode)
-if (isOwnerMode) {
-    if (toggleHearts) {
-        toggleHearts.addEventListener('change', () => {
-            if (toggleHearts.checked) {
-                startHeartsAnimation();
-            } else {
-                heartsContainer.innerHTML = '';
-            }
-        });
+function toggleFireworksAnimation() {
+    if (!elements.fireworksContainer) return;
+    
+    if (elements.toggleFireworks && elements.toggleFireworks.checked) {
+        startFireworksAnimation();
+    } else {
+        clearInterval(fireworksInterval);
+        elements.fireworksContainer.innerHTML = '';
     }
-
-    if (toggleSnow) {
-        toggleSnow.addEventListener('change', () => {
-            if (toggleSnow.checked) {
-                startSnowAnimation();
-            } else {
-                snowContainer.style.display = 'none';
-                snowContainer.innerHTML = '';
-            }
-        });
-    }
-
-    if (toggleFireworks) {
-        toggleFireworks.addEventListener('change', () => {
-            if (toggleFireworks.checked) {
-                startFireworksAnimation();
-            } else {
-                fireworksContainer.innerHTML = '';
-            }
-        });
-    }
+    
+    // Save setting
+    saveAnimationSettings();
 }
 
-// Calculate days together
+function saveAnimationSettings() {
+    const animations = {
+        hearts: elements.toggleHearts ? elements.toggleHearts.checked : true,
+        snow: elements.toggleSnow ? elements.toggleSnow.checked : false,
+        fireworks: elements.toggleFireworks ? elements.toggleFireworks.checked : false
+    };
+    
+    localStorage.setItem('animations', JSON.stringify(animations));
+}
+
+// Days counter functions
 function calculateDays() {
+    if (!elements.daysCount) return;
+    
+    // If no anniversary date is saved, set to current date
     if (!localStorage.getItem('anniversaryDate')) {
-        // Default to today if not set
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0];
         localStorage.setItem('anniversaryDate', formattedDate);
-        if (anniversaryDate) anniversaryDate.value = formattedDate;
-    } else if (anniversaryDate) {
-        anniversaryDate.value = localStorage.getItem('anniversaryDate');
+        
+        if (elements.anniversaryDate) {
+            elements.anniversaryDate.value = formattedDate;
+        }
+    } else if (elements.anniversaryDate) {
+        elements.anniversaryDate.value = localStorage.getItem('anniversaryDate');
     }
     
     updateDaysCount();
 }
 
 function updateDaysCount() {
+    if (!elements.daysCount) return;
+    
     const startDate = new Date(localStorage.getItem('anniversaryDate'));
     const today = new Date();
     
@@ -590,62 +762,283 @@ function updateDaysCount() {
     const timeDiff = today.getTime() - startDate.getTime();
     const dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
     
-    if (daysCount) {
-        daysCount.textContent = dayDiff;
-        
-        // Make counter animation
-        daysCount.classList.add('highlight');
-        setTimeout(() => {
-            daysCount.classList.remove('highlight');
-        }, 1000);
+    elements.daysCount.textContent = dayDiff;
+    
+    // Add animation
+    elements.daysCount.classList.add('highlight');
+    setTimeout(() => {
+        elements.daysCount.classList.remove('highlight');
+    }, 1000);
+}
+
+function saveAnniversaryDate() {
+    if (!elements.anniversaryDate) return;
+    
+    localStorage.setItem('anniversaryDate', elements.anniversaryDate.value);
+    updateDaysCount();
+    showNotification('Ngày kỷ niệm đã được cập nhật!', 'success');
+}
+
+// Music control
+let isMusicPlaying = false;
+function toggleMusic() {
+    if (!elements.bgMusic || !elements.musicControl) return;
+    
+    if (isMusicPlaying) {
+        elements.bgMusic.pause();
+        elements.musicControl.innerHTML = '<i class="fas fa-music"></i>';
+    } else {
+        elements.bgMusic.play();
+        elements.musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+    }
+    
+    isMusicPlaying = !isMusicPlaying;
+}
+
+// Change password
+function changePassword() {
+    if (!elements.newPassword) return;
+    
+    if (elements.newPassword.value.trim() !== '') {
+        password = elements.newPassword.value.trim();
+        localStorage.setItem('password', password);
+        showNotification('Mật khẩu đã được cập nhật!', 'success');
+        elements.newPassword.value = '';
+    } else {
+        showNotification('Vui lòng nhập mật khẩu mới!', 'error');
     }
 }
 
-calculateDays();
-
-// Save anniversary date (only in owner mode)
-if (isOwnerMode && anniversaryDate) {
-    anniversaryDate.addEventListener('change', () => {
-        localStorage.setItem('anniversaryDate', anniversaryDate.value);
-        updateDaysCount();
-        showNotification('Ngày kỷ niệm đã được cập nhật!', 'success');
-    });
-}
-
-// Save new password (only in owner mode)
-if (isOwnerMode && savePassword) {
-    savePassword.addEventListener('click', () => {
-        if (newPassword.value.trim() !== '') {
-            password = newPassword.value;
-            localStorage.setItem('password', password);
-            showNotification('Mật khẩu đã được cập nhật!', 'success');
-            newPassword.value = '';
-        } else {
-            showNotification('Vui lòng nhập mật khẩu mới!', 'error');
-        }
-    });
-}
-
-// Load saved password if exists
-if (localStorage.getItem('password')) {
-    password = localStorage.getItem('password');
-}
-
-// Fix for mobile viewport height issues
-function setMobileHeight() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-// Set the height initially and on resize
-setMobileHeight();
-window.addEventListener('resize', () => {
-    setMobileHeight();
-});
-
-// Add event listener to detect orientation change on mobile
-window.addEventListener('orientationchange', () => {
+// Show notification
+function showNotification(message, type = 'info') {
+    if (!elements.notification || !elements.notificationText) return;
+    
+    elements.notificationText.textContent = message;
+    elements.notification.className = 'notification';
+    
+    if (type === 'success') {
+        elements.notification.classList.add('success');
+        elements.notification.innerHTML = '<i class="fas fa-check-circle"></i>' + message;
+    } else if (type === 'error') {
+        elements.notification.classList.add('error');
+        elements.notification.innerHTML = '<i class="fas fa-exclamation-circle"></i>' + message;
+    } else {
+        elements.notification.innerHTML = '<i class="fas fa-info-circle"></i>' + message;
+    }
+    
+    elements.notification.classList.add('show');
+    
+    // Hide notification after 3 seconds
     setTimeout(() => {
-        setMobileHeight();
-    }, 200);
-});
+        elements.notification.classList.remove('show');
+    }, 3000);
+}
+
+// Return to edit mode
+function returnToEditMode() {
+    window.location.href = window.location.pathname;
+}
+
+// Memory functions
+function showMemoryModal() {
+    if (!elements.memoryModal) return;
+    elements.memoryModal.classList.add('show');
+}
+
+function hideMemoryModal() {
+    if (!elements.memoryModal) return;
+    elements.memoryModal.classList.remove('show');
+}
+
+function saveMemory(e) {
+    e.preventDefault();
+    
+    if (!elements.memoryDate || !elements.memoryText || !elements.timelineContainer) return;
+    
+    const date = formatDate(elements.memoryDate.value);
+    const text = elements.memoryText.value;
+    
+    if (date && text) {
+        // Add memory to timeline
+        addMemoryToTimeline(date, text);
+        
+        // Save to localStorage
+        const memories = JSON.parse(localStorage.getItem('memories') || '[]');
+        memories.push({ date, text });
+        localStorage.setItem('memories', JSON.stringify(memories));
+        
+        // Close modal and reset form
+        hideMemoryModal();
+        elements.memoryForm.reset();
+        
+        showNotification('Kỷ niệm đã được thêm thành công!', 'success');
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+function addMemoryToTimeline(date, text) {
+    if (!elements.timelineContainer) return;
+    
+    const newMemory = document.createElement('div');
+    newMemory.classList.add('timeline-item');
+    newMemory.innerHTML = `
+        <div class="timeline-content">
+            <div class="timeline-date"><i class="fas fa-calendar-alt"></i> ${date}</div>
+            <div class="timeline-text">${text}</div>
+        </div>
+    `;
+    
+    elements.timelineContainer.appendChild(newMemory);
+    
+    // Add animation
+    setTimeout(() => {
+        newMemory.style.opacity = 1;
+        newMemory.style.transform = 'translateY(0)';
+    }, 10);
+}
+
+// Image functions
+function showImageModal() {
+    if (!elements.imageModal) return;
+    elements.imageModal.classList.add('show');
+}
+
+function hideImageModal() {
+    if (!elements.imageModal) return;
+    elements.imageModal.classList.remove('show');
+}
+
+function saveImage(e) {
+    e.preventDefault();
+    
+    if (!elements.imageUrl || !elements.imageCaption) return;
+    
+    const url = elements.imageUrl.value;
+    const caption = elements.imageCaption.value;
+    
+    if (url) {
+        // Add image to gallery
+        addImageToGallery(url, caption);
+        
+        // Save to localStorage
+        const images = JSON.parse(localStorage.getItem('images') || '[]');
+        images.push({ url, caption });
+        localStorage.setItem('images', JSON.stringify(images));
+        
+        // Close modal and reset form
+        hideImageModal();
+        elements.imageForm.reset();
+        
+        showNotification('Ảnh đã được thêm thành công!', 'success');
+    }
+}
+
+function addImageToGallery(url, caption) {
+    const gallery = document.querySelector('.gallery');
+    if (!gallery) return;
+    
+    const addImageBtn = document.getElementById('addImage');
+    
+    const newImage = document.createElement('div');
+    newImage.classList.add('gallery-item');
+    newImage.innerHTML = `
+        <img src="${url}" alt="${caption}">
+        <div class="caption">${caption}</div>
+    `;
+    
+    // Insert before the "Add Image" button or at the beginning
+    if (addImageBtn) {
+        gallery.insertBefore(newImage, addImageBtn.nextSibling);
+    } else {
+        gallery.prepend(newImage);
+    }
+}
+
+// Share functions
+let requirePasswordForShared = false;
+
+function updateShareLink() {
+    if (!elements.shareLink || !elements.requirePassword) return;
+    
+    requirePasswordForShared = elements.requirePassword.checked;
+    const newShareLink = generateShareLink();
+    elements.shareLink.value = newShareLink;
+    
+    generateQRCode(newShareLink);
+}
+
+function generateShareLink() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    
+    const baseUrl = window.location.origin + window.location.pathname;
+    const protectedParam = requirePasswordForShared ? '&protected=1' : '';
+    return `${baseUrl}?share=${result}${protectedParam}`;
+}
+
+function generateQRCode(url) {
+    if (!window.QRCode || !elements.qrCode) return;
+    
+    elements.qrCode.innerHTML = '';
+    
+    try {
+        new QRCode(elements.qrCode, {
+            text: url,
+            width: 180,
+            height: 180,
+            colorDark: '#ff6e95',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } catch (error) {
+        console.error('QR Code generation error:', error);
+    }
+}
+
+function copyShareLink() {
+    if (!elements.shareLink) return;
+    
+    elements.shareLink.select();
+    document.execCommand('copy');
+    showNotification('Đường dẫn đã được sao chép!', 'success');
+}
+
+// Social media share
+function shareSocial() {
+    if (!elements.shareLink) return;
+    
+    const url = encodeURIComponent(elements.shareLink.value);
+    const text = encodeURIComponent('Xem tâm thư yêu thương của tôi!');
+    let shareUrl;
+    
+    if (this.classList.contains('facebook')) {
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    } else if (this.classList.contains('twitter')) {
+        shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    } else if (this.classList.contains('whatsapp')) {
+        shareUrl = `https://api.whatsapp.com/send?text=${text} ${url}`;
+    } else if (this.classList.contains('telegram')) {
+        shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+    }
+    
+    if (shareUrl) {
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+}
+
+// Global intervals for animations
+let heartInterval, snowInterval, fireworksInterval;
+
+// Start the application
+// Note: The application is initialized through the DOMContentLoaded event listener at the top
